@@ -8,6 +8,11 @@ using Vivicasa.CMS.API.Models;
 
 namespace Vivicasa.CMS.API.Services;
 
+public interface IJwtService
+{
+    Task<string> GenerateJwtTokenAsync(User user);
+}
+
 public class JwtService : IJwtService
 {
     private readonly UserManager<User> _userManager;
