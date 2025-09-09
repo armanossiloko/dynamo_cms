@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vivicasa.CMS.API.Models.Dto;
-using Vivicasa.CMS.API.Services;
+using Dynamo.CMS.API.Models.Dto;
+using Dynamo.CMS.API.Services;
 
-namespace Vivicasa.CMS.API.Controllers;
+namespace Dynamo.CMS.API.Controllers;
 
 /// <summary>
 /// Controller for managing user authentication and registration

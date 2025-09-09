@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Vivicasa.CMS.API.Data;
+using Dynamo.CMS.API.Data;
 
 #nullable disable
 
-namespace Vivicasa.CMS.API.Migrations
+namespace Dynamo.CMS.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250909181623_InitialCreate")]
@@ -157,7 +157,7 @@ namespace Vivicasa.CMS.API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Vivicasa.CMS.API.Models.User", b =>
+            modelBuilder.Entity("Dynamo.CMS.API.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -244,7 +244,7 @@ namespace Vivicasa.CMS.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Vivicasa.CMS.API.Models.User", null)
+                    b.HasOne("Dynamo.CMS.API.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -253,7 +253,7 @@ namespace Vivicasa.CMS.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Vivicasa.CMS.API.Models.User", null)
+                    b.HasOne("Dynamo.CMS.API.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -268,7 +268,7 @@ namespace Vivicasa.CMS.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vivicasa.CMS.API.Models.User", null)
+                    b.HasOne("Dynamo.CMS.API.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -277,7 +277,7 @@ namespace Vivicasa.CMS.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Vivicasa.CMS.API.Models.User", null)
+                    b.HasOne("Dynamo.CMS.API.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -4,9 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Vivicasa.CMS.API.Models;
+using Dynamo.CMS.API.Models;
 
-namespace Vivicasa.CMS.API.Services;
+namespace Dynamo.CMS.API.Services;
 
 public interface IJwtService
 {

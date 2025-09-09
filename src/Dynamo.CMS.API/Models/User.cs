@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Vivicasa.CMS.API.Models;
+namespace Dynamo.CMS.API.Models;
 
 public class User : IdentityUser
 {

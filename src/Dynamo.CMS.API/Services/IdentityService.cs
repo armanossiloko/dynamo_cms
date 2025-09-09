@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Vivicasa.CMS.API.Models;
-using Vivicasa.CMS.API.Models.Dto;
+using Dynamo.CMS.API.Models;
+using Dynamo.CMS.API.Models.Dto;
 
-namespace Vivicasa.CMS.API.Services;
+namespace Dynamo.CMS.API.Services;
 public interface IIdentityService
 {
     Task<AuthResponse> RegisterAsync(RegisterRequest request);

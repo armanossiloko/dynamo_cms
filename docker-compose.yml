@@ -1,0 +1,23 @@
+services:
+  # PostgreSQL Server
+  postgres:
+    image: postgres:latest
+    restart: on-failure
+    container_name: cms-postgres-container
+    environment:
+      POSTGRES_USER: dynamo
+      POSTGRES_PASSWORD: dynamo
+    ports:
+      - "15432:5432"
+    networks:
+      - cms-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/db:/docker-entrypoint-initdb.d
+
+networks:
+  cms-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

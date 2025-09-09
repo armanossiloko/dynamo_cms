@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Vivicasa.CMS.API.Models;
+using Dynamo.CMS.API.Models;
 
-namespace Vivicasa.CMS.API.Data;
+namespace Dynamo.CMS.API.Data;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {

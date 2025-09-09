@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Vivicasa.CMS.API.Migrations
+namespace Dynamo.CMS.API.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

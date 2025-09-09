@@ -1,4 +1,4 @@
-namespace Vivicasa.CMS.API.Models.Dto;
+namespace Dynamo.CMS.API.Models.Dto;
 
 public class LoginRequest
 {
