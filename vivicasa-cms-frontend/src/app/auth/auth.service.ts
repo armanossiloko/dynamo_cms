@@ -23,7 +23,7 @@ export interface AuthResponseDto {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7277/api/identity';
+  private readonly baseUrl = 'https://localhost:7001/api/identity';
 
   login(body: LoginRequestDto) {
     return this.http.post<AuthResponseDto>(`${this.baseUrl}/login`, body);
