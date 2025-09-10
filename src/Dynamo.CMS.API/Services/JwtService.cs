@@ -1,54 +1,64 @@
+using Dynamo.CMS.API.Models;
+using Dynamo.CMS.API.Options;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Dynamo.CMS.API.Models;
 
 namespace Dynamo.CMS.API.Services;
 
 public interface IJwtService
 {
-    Task<string> GenerateJwtTokenAsync(User user);
+    Task<string> GenerateTokenAsync(User user);
 }
 
 public class JwtService : IJwtService
 {
     private readonly UserManager<User> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly IOptions<JwtOptions> _jwtOptions;
+    private readonly TimeProvider _timeProvider;
 
-    public JwtService(UserManager<User> userManager, IConfiguration configuration)
+    public JwtService(
+        UserManager<User> userManager,
+        IOptions<JwtOptions> jwtOptions,
+        TimeProvider timeProvider
+        )
     {
         _userManager = userManager;
-        _configuration = configuration;
+        _jwtOptions = jwtOptions;
+        _timeProvider = timeProvider;
     }
 
-    public async Task<string> GenerateJwtTokenAsync(User user)
+    public async Task<string> GenerateTokenAsync(User user)
     {
         var userRoles = await _userManager.GetRolesAsync(user);
+
+        var issuedAt = _timeProvider.GetUtcNow();
+        var expiresAt = issuedAt.Add(_jwtOptions.Value.AccessTokenLifetime);
+
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.Name, user.UserName!),
         };
         claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
-        claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64));
+        claims.Add(new Claim(JwtRegisteredClaimNames.Iat, issuedAt.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64));
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expirationMinutes = _configuration.GetValue<int>("Jwt:ExpirationMinutes");
-        var expires = DateTimeOffset.UtcNow.AddMinutes(expirationMinutes);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Value.Key));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            issuer: _jwtOptions.Value.Issuer,
+            audience: _jwtOptions.Value.Audience,
             claims: claims,
-            expires: expires.UtcDateTime,
-            signingCredentials: creds
+            expires: expiresAt.UtcDateTime,
+            signingCredentials: credentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 }

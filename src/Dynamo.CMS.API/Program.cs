@@ -1,5 +1,6 @@
 using Dynamo.CMS.API.Data;
 using Dynamo.CMS.API.Models;
+using Dynamo.CMS.API.Options;
 using Dynamo.CMS.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var jwtOptions = builder.Configuration.GetSection(JwtOptions.OptionsName).Get<JwtOptions>()!;
+
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.OptionsName));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -43,10 +48,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        ValidIssuer = jwtOptions.Issuer,
+        ValidAudience = jwtOptions.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
         ClockSkew = TimeSpan.Zero 
     };
 });
@@ -90,6 +94,16 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 
@@ -115,18 +129,19 @@ using (var scope = app.Services.CreateScope())
             }
         }
 
-        // Ensure admin user exists
         var adminEmail = "admin@vivicasa.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
         {
             adminUser = new User
             {
-                UserName = adminEmail,
+                UserName = "admin",
                 Email = adminEmail,
                 FirstName = "Admin",
                 LastName = "User",
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                CreatedAt = DateTimeOffset.UtcNow,
+                IsActive = true,
             };
 
             var result = await userManager.CreateAsync(adminUser, "Admin123!@#");
@@ -150,10 +165,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

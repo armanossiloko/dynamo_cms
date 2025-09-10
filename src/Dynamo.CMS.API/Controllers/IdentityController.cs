@@ -1,7 +1,7 @@
+using Dynamo.CMS.API.Contracts;
+using Dynamo.CMS.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dynamo.CMS.API.Models.Dto;
-using Dynamo.CMS.API.Services;
 
 namespace Dynamo.CMS.API.Controllers;
 

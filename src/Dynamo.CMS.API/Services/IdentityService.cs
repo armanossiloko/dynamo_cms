@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Dynamo.CMS.API.Models;
-using Dynamo.CMS.API.Models.Dto;
+using Dynamo.CMS.API.Contracts;
 
 namespace Dynamo.CMS.API.Services;
+
 public interface IIdentityService
 {
     Task<AuthResponse> RegisterAsync(RegisterRequest request);
@@ -46,7 +46,9 @@ public class IdentityService : IIdentityService
             Email = request.Email,
             UserName = request.Email,
             FirstName = request.FirstName,
-            LastName = request.LastName
+            LastName = request.LastName,
+            IsActive = true,
+            
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);
@@ -78,34 +80,44 @@ public class IdentityService : IIdentityService
         _logger.LogInformation("Login attempt for user: {Email}", request.Email);
 
         var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
+        if (user is null)
         {
             _logger.LogWarning("Login failed: User {Email} not found", request.Email);
             return new AuthResponse
             {
                 Success = false,
-                Message = "Invalid credentials"
+                Message = "INVALID_CREDENTIALS"
             };
         }
 
         var validPassword = await _userManager.CheckPasswordAsync(user, request.Password);
         if (!validPassword)
         {
-            _logger.LogWarning("Login failed: Invalid password for user {Email}", request.Email);
+            _logger.LogWarning("Login failed; invalid password for user {Email}", request.Email);
             return new AuthResponse
             {
                 Success = false,
-                Message = "Invalid credentials"
+                Message = "INVALID_CREDENTIALS"
             };
         }
 
-        var token = await _jwtService.GenerateJwtTokenAsync(user);
+        if (!user.IsActive)
+        {
+            _logger.LogWarning("Login failed; user {Email} is inactive.", request.Email);
+            return new AuthResponse
+            {
+                Success = false,
+                Message = "USER_INACTIVE"
+            };
+        }
+
+        var token = await _jwtService.GenerateTokenAsync(user);
 
         _logger.LogInformation("User {Email} logged in successfully", request.Email);
         return new AuthResponse
         {
             Success = true,
-            Token = token,
+            AccessToken = token,
             Email = user.Email
         };
     }

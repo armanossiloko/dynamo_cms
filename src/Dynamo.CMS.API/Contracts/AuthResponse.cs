@@ -1,4 +1,4 @@
-namespace Dynamo.CMS.API.Models.Dto;
+namespace Dynamo.CMS.API.Contracts;
 
 public class LoginRequest
 {
@@ -17,7 +17,8 @@ public class RegisterRequest
 public class AuthResponse
 {
     public bool Success { get; set; }
-    public string? Token { get; set; }
+    public string? AccessToken { get; set; }
     public string? Message { get; set; }
     public string? Email { get; set; }
+
 }

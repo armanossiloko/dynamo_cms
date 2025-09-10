@@ -1,6 +1,6 @@
+using Dynamo.CMS.API.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Dynamo.CMS.API.Models;
 
 namespace Dynamo.CMS.API.Data;
 
@@ -17,4 +17,5 @@ public class ApplicationDbContext : IdentityDbContext<User>
         
         // Add any additional model configurations here
     }
+
 }
