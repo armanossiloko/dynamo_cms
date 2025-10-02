@@ -1,4 +1,5 @@
 using Dynamo.CMS.API.Data;
+using Dynamo.CMS.API.Mapping;
 using Dynamo.CMS.API.Models;
 using Dynamo.CMS.API.Options;
 using Dynamo.CMS.API.Services;
@@ -6,24 +7,32 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.OptionsName).Get<JwtOptions>()!;
+var applicationOptions = builder.Configuration.GetSection(ApplicationOptions.OptionsName).Get<ApplicationOptions>()!;
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.OptionsName));
+builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection(ApplicationOptions.OptionsName));
+builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.OptionsName));
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddSingleton<CatalogMapper>();
+builder.Services.AddSingleton<SqlValidator>();
+builder.Services.AddSingleton<PostgreSQLGenerator>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<User, IdentityRole>(options => 
+builder.Services.AddIdentity<User, Role>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 8;
+    options.Password.RequiredLength = 6;
 
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
@@ -31,7 +40,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
     options.User.RequireUniqueEmail = true;
 })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
 // JWT Auth
@@ -51,7 +60,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = jwtOptions.Issuer,
         ValidAudience = jwtOptions.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
-        ClockSkew = TimeSpan.Zero 
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -66,7 +75,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "Dynamo CMS API",
         Version = "v1",
-        Description = "API for Vivicasa CMS"
+        Description = "API for Dynamo CMS",
     });
 
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -114,24 +123,31 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        var dbContext = services.GetRequiredService<AppDbContext>();
         dbContext.Database.Migrate();
 
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        dbContext.Seed();
+
+        var roleManager = services.GetRequiredService<RoleManager<Role>>();
         var userManager = services.GetRequiredService<UserManager<User>>();
-        
+
         var roles = new[] { "Admin", "User" };
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
-                await roleManager.CreateAsync(new IdentityRole(role));
+                await roleManager.CreateAsync(new Role
+                {
+                    ConcurrencyStamp =  Guid.NewGuid().ToString(),
+                    Name = role,
+                    NormalizedName = role.ToUpper(),
+                });
             }
         }
 
-        var adminEmail = "admin@vivicasa.com";
+        var adminEmail = "admin@dynamo.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        if (adminUser == null)
+        if (adminUser is null)
         {
             adminUser = new User
             {
@@ -144,7 +160,7 @@ using (var scope = app.Services.CreateScope())
                 IsActive = true,
             };
 
-            var result = await userManager.CreateAsync(adminUser, "Admin123!@#");
+            var result = await userManager.CreateAsync(adminUser, "Dynamo123!");
             if (result.Succeeded)
             {
                 await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -160,8 +176,30 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(options =>
+    {
+        options.RouteTemplate = "/openapi/{documentName}.{extension:regex(^(json|ya?ml)$)}";
+    });
+    app.UseSwaggerUI(options =>
+    {
+        options.DocumentTitle = $"{app.Configuration["Application:Name"]} Swagger";
+        options.EnableTryItOutByDefault();
+        options.SwaggerEndpoint("/openapi/v1.json", $"{app.Configuration["Application:Name"]}");
+        options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+
+        //var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+        //foreach (var apiDescription in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        //{
+        //    var endpoint = $"/openapi/{apiDescription.GroupName}.json";
+        //    var name = $"{app.Configuration["Application:Name"]} {apiDescription.ApiVersion}";
+        //    options.SwaggerEndpoint(endpoint, name);
+        //}
+    });
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = $"{app.Configuration["Application:Name"]} Scalar UI";
+        options.WithFavicon("/favicon.ico");
+    });
 }
 
 app.UseHttpsRedirection();
@@ -171,3 +209,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

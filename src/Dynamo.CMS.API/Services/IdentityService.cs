@@ -19,7 +19,8 @@ public class IdentityService : IIdentityService
     public IdentityService(
         UserManager<User> userManager,
         IJwtService jwtService,
-        ILogger<IdentityService> logger)
+        ILogger<IdentityService> logger
+        )
     {
         _userManager = userManager;
         _jwtService = jwtService;
@@ -31,24 +32,35 @@ public class IdentityService : IIdentityService
         _logger.LogInformation("Admin attempting to register user with email: {Email}", request.Email);
 
         var userExists = await _userManager.FindByEmailAsync(request.Email);
-        if (userExists != null)
+        if (userExists is not null)
         {
-            _logger.LogWarning("Registration failed: User with email {Email} already exists", request.Email);
+            _logger.LogWarning("Registration failed: User with email {Email} already exists.", request.Email);
             return new AuthResponse
             {
                 Success = false,
-                Message = "User already exists"
+                Message = "EMAIL_ALREADY_TAKEN"
+            };
+        }
+
+        userExists = await _userManager.FindByNameAsync(request.UserName);
+        if (userExists is not null)
+        {
+            _logger.LogWarning("Registration failed: User with username {UserName} already exists.", request.UserName);
+            return new AuthResponse
+            {
+                Success = false,
+                Message = "USERNAME_ALREADY_TAKEN"
             };
         }
 
         var user = new User
         {
             Email = request.Email,
-            UserName = request.Email,
+            UserName = request.UserName,
             FirstName = request.FirstName,
             LastName = request.LastName,
             IsActive = true,
-            
+
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);
@@ -71,15 +83,24 @@ public class IdentityService : IIdentityService
         {
             Success = true,
             Email = user.Email,
-            Message = "User created successfully"
+            Message = "USER_CREATED_SUCCESSFULLY"
         };
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        _logger.LogInformation("Login attempt for user: {Email}", request.Email);
+        User? user = null;
+        if (!string.IsNullOrEmpty(request.Email))
+        {
+            _logger.LogDebug("Login attempt for user with email {Email}", request.Email);
+            user = await _userManager.FindByEmailAsync(request.Email);
+        }
+        else if (!string.IsNullOrEmpty(request.UserName))
+        {
+            _logger.LogDebug("Login attempt for user with username {UserName}", request.UserName);
+            user = await _userManager.FindByNameAsync(request.UserName);
+        }
 
-        var user = await _userManager.FindByEmailAsync(request.Email);
         if (user is null)
         {
             _logger.LogWarning("Login failed: User {Email} not found", request.Email);
