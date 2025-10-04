@@ -56,7 +56,11 @@ public class DataCollectionsController : ControllerBase
             var dataCollection = dataCollections.SingleOrDefault(d => d.Name == contract.Name);
             if (dataCollection is not null)
             {
-                return BadRequest();
+                return Problem(
+                    detail: $"Collection '{contract.Name}' already exists.",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Collection Already Exists"
+                );
             }
 
             var baseTypes = _context.BaseTypes.AsNoTracking().ToList();
@@ -87,10 +91,11 @@ public class DataCollectionsController : ControllerBase
             });
             if (!referenceValid)
             {
-                return NotFound(new
-                {
-                    message = $"Some DataCollections not found."
-                });
+                return Problem(
+                    detail: "Some referenced DataCollections not found.",
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Referenced Collection Not Found"
+                );
             }
 
             var createStatement = _sqlGenerator.GenerateCreateTableSql(contract.Name, createColumns);
@@ -121,7 +126,12 @@ public class DataCollectionsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Transaction rolled back: {Message}", ex.Message);
-            return StatusCode(500, ex);
+            return Problem(
+                detail: "An error occurred while creating the collection.",
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: "Internal Server Error",
+                instance: HttpContext.Request.Path
+            );
         }
     }
 
@@ -134,7 +144,11 @@ public class DataCollectionsController : ControllerBase
             var dataCollection = _context.DataCollections.AsNoTracking().Include(d => d.Columns).FirstOrDefault(d => d.Name == dataCollectionName);
             if (dataCollection is null)
             {
-                return NotFound();
+                return Problem(
+                    detail: $"Collection '{dataCollectionName}' not found.",
+                    statusCode: StatusCodes.Status404NotFound,
+                    title: "Collection Not Found"
+                );
             }
 
             var baseTypes = _context.BaseTypes.AsNoTracking().ToList();
@@ -231,7 +245,12 @@ public class DataCollectionsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Transaction rolled back: {Message}", ex.Message);
-            return StatusCode(500, ex);
+            return Problem(
+                detail: "An error occurred while creating the collection.",
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: "Internal Server Error",
+                instance: HttpContext.Request.Path
+            );
         }
     }
 }
