@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Dynamo.CMS.API.Models;
 
-[Table("data_collection_columns")]
+[Table("dynamo_data_collection_columns")]
 public class DataCollectionColumn : IEntity<long>
 {
     [Key]

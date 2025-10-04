@@ -21,13 +21,13 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<User>().ToTable("users");
-        builder.Entity<Role>().ToTable("roles");
-        builder.Entity<UserClaim>().ToTable("user_claims");
-        builder.Entity<UserRole>().ToTable("user_roles");
-        builder.Entity<UserLogin>().ToTable("user_logins");
-        builder.Entity<RoleClaim>().ToTable("role_claims");
-        builder.Entity<UserToken>().ToTable("user_tokens");
+        builder.Entity<User>().ToTable("dynamo_users");
+        builder.Entity<Role>().ToTable("dynamo_roles");
+        builder.Entity<UserClaim>().ToTable("dynamo_user_claims");
+        builder.Entity<UserRole>().ToTable("dynamo_user_roles");
+        builder.Entity<UserLogin>().ToTable("dynamo_user_logins");
+        builder.Entity<RoleClaim>().ToTable("dynamo_role_claims");
+        builder.Entity<UserToken>().ToTable("dynamo_user_tokens");
 
         builder.Entity<DataCollection>()
             .HasMany(e => e.Columns)

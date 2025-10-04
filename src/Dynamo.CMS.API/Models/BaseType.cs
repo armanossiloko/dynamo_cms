@@ -10,7 +10,7 @@ namespace Dynamo.CMS.API.Models;
 ///         <see cref="DbDataType"/> would be equal to `text`, while <see cref="DataType"/> would be equal to "string".
 ///     </para>
 /// </summary>
-[Table("base_types")]
+[Table("dynamo_base_types")]
 public class BaseType
 {
     [Key]

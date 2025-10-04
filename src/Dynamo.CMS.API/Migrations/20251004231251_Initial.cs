@@ -13,7 +13,7 @@ namespace Dynamo.CMS.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "base_types",
+                name: "dynamo_base_types",
                 columns: table => new
                 {
                     name = table.Column<string>(type: "text", nullable: false),
@@ -24,11 +24,11 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_base_types", x => x.name);
+                    table.PrimaryKey("PK_dynamo_base_types", x => x.name);
                 });
 
             migrationBuilder.CreateTable(
-                name: "collections",
+                name: "dynamo_collections",
                 columns: table => new
                 {
                     name = table.Column<string>(type: "text", nullable: false),
@@ -36,11 +36,11 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_collections", x => x.name);
+                    table.PrimaryKey("PK_dynamo_collections", x => x.name);
                 });
 
             migrationBuilder.CreateTable(
-                name: "roles",
+                name: "dynamo_roles",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -51,11 +51,11 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_roles", x => x.Id);
+                    table.PrimaryKey("PK_dynamo_roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "users",
+                name: "dynamo_users",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -82,11 +82,11 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("PK_dynamo_users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "data_collection_columns",
+                name: "dynamo_data_collection_columns",
                 columns: table => new
                 {
                     id = table.Column<long>(type: "bigint", nullable: false)
@@ -102,23 +102,23 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_data_collection_columns", x => x.id);
+                    table.PrimaryKey("PK_dynamo_data_collection_columns", x => x.id);
                     table.ForeignKey(
-                        name: "FK_data_collection_columns_base_types_base_type",
+                        name: "FK_dynamo_data_collection_columns_dynamo_base_types_base_type",
                         column: x => x.base_type,
-                        principalTable: "base_types",
+                        principalTable: "dynamo_base_types",
                         principalColumn: "name",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_data_collection_columns_collections_data_collection_name",
+                        name: "FK_dynamo_data_collection_columns_dynamo_collections_data_coll~",
                         column: x => x.data_collection_name,
-                        principalTable: "collections",
+                        principalTable: "dynamo_collections",
                         principalColumn: "name",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "role_claims",
+                name: "dynamo_role_claims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -129,17 +129,17 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_role_claims", x => x.Id);
+                    table.PrimaryKey("PK_dynamo_role_claims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_role_claims_roles_RoleId",
+                        name: "FK_dynamo_role_claims_dynamo_roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "roles",
+                        principalTable: "dynamo_roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_claims",
+                name: "dynamo_user_claims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -150,17 +150,17 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_claims", x => x.Id);
+                    table.PrimaryKey("PK_dynamo_user_claims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_user_claims_users_UserId",
+                        name: "FK_dynamo_user_claims_dynamo_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "users",
+                        principalTable: "dynamo_users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_logins",
+                name: "dynamo_user_logins",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
@@ -170,17 +170,17 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_logins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_dynamo_user_logins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
-                        name: "FK_user_logins_users_UserId",
+                        name: "FK_dynamo_user_logins_dynamo_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "users",
+                        principalTable: "dynamo_users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_roles",
+                name: "dynamo_user_roles",
                 columns: table => new
                 {
                     UserId = table.Column<long>(type: "bigint", nullable: false),
@@ -188,23 +188,23 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_roles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_dynamo_user_roles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_user_roles_roles_RoleId",
+                        name: "FK_dynamo_user_roles_dynamo_roles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "roles",
+                        principalTable: "dynamo_roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_user_roles_users_UserId",
+                        name: "FK_dynamo_user_roles_dynamo_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "users",
+                        principalTable: "dynamo_users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_tokens",
+                name: "dynamo_user_tokens",
                 columns: table => new
                 {
                     UserId = table.Column<long>(type: "bigint", nullable: false),
@@ -214,59 +214,59 @@ namespace Dynamo.CMS.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user_tokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_dynamo_user_tokens", x => new { x.UserId, x.LoginProvider, x.Name });
                     table.ForeignKey(
-                        name: "FK_user_tokens_users_UserId",
+                        name: "FK_dynamo_user_tokens_dynamo_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "users",
+                        principalTable: "dynamo_users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_data_collection_columns_base_type",
-                table: "data_collection_columns",
+                name: "IX_dynamo_data_collection_columns_base_type",
+                table: "dynamo_data_collection_columns",
                 column: "base_type");
 
             migrationBuilder.CreateIndex(
-                name: "IX_data_collection_columns_data_collection_name",
-                table: "data_collection_columns",
+                name: "IX_dynamo_data_collection_columns_data_collection_name",
+                table: "dynamo_data_collection_columns",
                 column: "data_collection_name");
 
             migrationBuilder.CreateIndex(
-                name: "IX_role_claims_RoleId",
-                table: "role_claims",
+                name: "IX_dynamo_role_claims_RoleId",
+                table: "dynamo_role_claims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                table: "roles",
+                table: "dynamo_roles",
                 column: "NormalizedName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_claims_UserId",
-                table: "user_claims",
+                name: "IX_dynamo_user_claims_UserId",
+                table: "dynamo_user_claims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_logins_UserId",
-                table: "user_logins",
+                name: "IX_dynamo_user_logins_UserId",
+                table: "dynamo_user_logins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_user_roles_RoleId",
-                table: "user_roles",
+                name: "IX_dynamo_user_roles_RoleId",
+                table: "dynamo_user_roles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                table: "users",
+                table: "dynamo_users",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                table: "users",
+                table: "dynamo_users",
                 column: "NormalizedUserName",
                 unique: true);
         }
@@ -275,34 +275,34 @@ namespace Dynamo.CMS.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "data_collection_columns");
+                name: "dynamo_data_collection_columns");
 
             migrationBuilder.DropTable(
-                name: "role_claims");
+                name: "dynamo_role_claims");
 
             migrationBuilder.DropTable(
-                name: "user_claims");
+                name: "dynamo_user_claims");
 
             migrationBuilder.DropTable(
-                name: "user_logins");
+                name: "dynamo_user_logins");
 
             migrationBuilder.DropTable(
-                name: "user_roles");
+                name: "dynamo_user_roles");
 
             migrationBuilder.DropTable(
-                name: "user_tokens");
+                name: "dynamo_user_tokens");
 
             migrationBuilder.DropTable(
-                name: "base_types");
+                name: "dynamo_base_types");
 
             migrationBuilder.DropTable(
-                name: "collections");
+                name: "dynamo_collections");
 
             migrationBuilder.DropTable(
-                name: "roles");
+                name: "dynamo_roles");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "dynamo_users");
         }
     }
 }

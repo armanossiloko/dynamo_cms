@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Dynamo.CMS.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251001233955_Initial")]
+    [Migration("20251004231251_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -51,7 +51,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("base_types");
+                    b.ToTable("dynamo_base_types");
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.DataCollection", b =>
@@ -67,7 +67,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("collections");
+                    b.ToTable("dynamo_collections");
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.DataCollectionColumn", b =>
@@ -120,7 +120,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasIndex("DataCollectionName");
 
-                    b.ToTable("data_collection_columns");
+                    b.ToTable("dynamo_data_collection_columns");
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.Role", b =>
@@ -149,7 +149,7 @@ namespace Dynamo.CMS.API.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("dynamo_roles", (string)null);
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.RoleClaim", b =>
@@ -173,7 +173,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("role_claims", (string)null);
+                    b.ToTable("dynamo_role_claims", (string)null);
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.User", b =>
@@ -255,7 +255,7 @@ namespace Dynamo.CMS.API.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("dynamo_users", (string)null);
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.UserClaim", b =>
@@ -279,7 +279,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("user_claims", (string)null);
+                    b.ToTable("dynamo_user_claims", (string)null);
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.UserLogin", b =>
@@ -300,7 +300,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("user_logins", (string)null);
+                    b.ToTable("dynamo_user_logins", (string)null);
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.UserRole", b =>
@@ -315,7 +315,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("user_roles", (string)null);
+                    b.ToTable("dynamo_user_roles", (string)null);
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.UserToken", b =>
@@ -334,7 +334,7 @@ namespace Dynamo.CMS.API.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("user_tokens", (string)null);
+                    b.ToTable("dynamo_user_tokens", (string)null);
                 });
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.DataCollectionColumn", b =>
@@ -346,7 +346,7 @@ namespace Dynamo.CMS.API.Migrations
                         .IsRequired();
 
                     b.HasOne("Dynamo.CMS.API.Models.DataCollection", "DataCollection")
-                        .WithMany("CollectionColumns")
+                        .WithMany("Columns")
                         .HasForeignKey("DataCollectionName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -409,7 +409,7 @@ namespace Dynamo.CMS.API.Migrations
 
             modelBuilder.Entity("Dynamo.CMS.API.Models.DataCollection", b =>
                 {
-                    b.Navigation("CollectionColumns");
+                    b.Navigation("Columns");
                 });
 #pragma warning restore 612, 618
         }
