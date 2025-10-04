@@ -1,0 +1,35 @@
+meta {
+  name: Seed More Products
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/data/products
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "name": "Wireless Headphones",
+    "description": "Noise-cancelling wireless headphones with 30-hour battery life",
+    "price": 199.99,
+    "category": "Electronics",
+    "inStock": true,
+    "createdAt": "2024-01-12T11:30:00Z"
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

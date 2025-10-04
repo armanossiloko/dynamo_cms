@@ -1,0 +1,35 @@
+meta {
+  name: Seed Order Data
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/data/orders
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "userId": 1,
+    "productId": 1,
+    "quantity": 1,
+    "totalAmount": 1299.99,
+    "orderDate": "2024-01-20T15:45:00Z",
+    "status": "completed"
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

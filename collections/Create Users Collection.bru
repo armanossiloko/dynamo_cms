@@ -1,0 +1,82 @@
+meta {
+  name: Create Users Collection
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/collections
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "users",
+    "displayName": "Users",
+    "columns": [
+      {
+        "name": "id",
+        "displayName": "ID",
+        "baseTypeName": "integer",
+        "nullable": false,
+        "visible": true,
+        "unique": true,
+        "autoIncrement": true
+      },
+      {
+        "name": "username",
+        "displayName": "Username",
+        "baseTypeName": "string",
+        "nullable": false,
+        "visible": true,
+        "unique": true,
+        "autoIncrement": false
+      },
+      {
+        "name": "email",
+        "displayName": "Email",
+        "baseTypeName": "string",
+        "nullable": false,
+        "visible": true,
+        "unique": true,
+        "autoIncrement": false
+      },
+      {
+        "name": "firstName",
+        "displayName": "First Name",
+        "baseTypeName": "string",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "lastName",
+        "displayName": "Last Name",
+        "baseTypeName": "string",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "createdAt",
+        "displayName": "Created At",
+        "baseTypeName": "datetime",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      }
+    ]
+  }
+}
+
+headers {
+  Content-Type: application/json
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

@@ -1,0 +1,34 @@
+meta {
+  name: Seed User Data
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/data/users
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "username": "john_doe",
+    "email": "john.doe@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

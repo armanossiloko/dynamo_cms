@@ -1,0 +1,19 @@
+meta {
+  name: Get Base Types
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/basetypes
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Get All Products
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/data/products
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

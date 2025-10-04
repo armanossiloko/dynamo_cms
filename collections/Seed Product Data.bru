@@ -1,0 +1,35 @@
+meta {
+  name: Seed Product Data
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/data/products
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "name": "Laptop Pro 15",
+    "description": "High-performance laptop with 16GB RAM and 512GB SSD",
+    "price": 1299.99,
+    "category": "Electronics",
+    "inStock": true,
+    "createdAt": "2024-01-10T09:00:00Z"
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

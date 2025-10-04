@@ -1,0 +1,91 @@
+meta {
+  name: Create Products Collection
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/collections
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "products",
+    "displayName": "Products",
+    "columns": [
+      {
+        "name": "id",
+        "displayName": "ID",
+        "baseTypeName": "integer",
+        "nullable": false,
+        "visible": true,
+        "unique": true,
+        "autoIncrement": true
+      },
+      {
+        "name": "name",
+        "displayName": "Product Name",
+        "baseTypeName": "string",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "description",
+        "displayName": "Description",
+        "baseTypeName": "string",
+        "nullable": true,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "price",
+        "displayName": "Price",
+        "baseTypeName": "decimal",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "category",
+        "displayName": "Category",
+        "baseTypeName": "string",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "inStock",
+        "displayName": "In Stock",
+        "baseTypeName": "boolean",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "createdAt",
+        "displayName": "Created At",
+        "baseTypeName": "datetime",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      }
+    ]
+  }
+}
+
+headers {
+  Content-Type: application/json
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}

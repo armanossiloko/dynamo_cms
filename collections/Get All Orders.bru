@@ -1,0 +1,24 @@
+meta {
+  name: Get All Orders
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/data/orders
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
