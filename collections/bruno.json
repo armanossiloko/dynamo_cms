@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Dynamo CMS",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
