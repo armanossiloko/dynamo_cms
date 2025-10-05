@@ -12,6 +12,19 @@ The roadmap is divided into two main sections:
 
 These features are considered essential for Dynamo.CMS to be a competitive and complete headless CMS solution. They address the most significant gaps when compared to platforms like Strapi.
 
+### 1.0. Dynamic Swagger OpenAPI Documentation ✅ **COMPLETED**
+- **Description**: Automatic generation of separate Swagger OpenAPI documents for each user-created collection, similar to Strapi's approach. When a user creates a collection named "posts", it automatically generates dedicated API documentation at `/api/swagger/posts`.
+- **Justification**: Essential for developer experience and API discoverability. Each collection gets its own comprehensive API documentation with proper schemas, authentication, and CRUD operations.
+- **Implementation**: 
+  - `DynamicSwaggerService` generates OpenAPI documents on-the-fly based on collection schemas
+  - `SwaggerController` serves collection-specific and combined API documentation
+  - Automatic schema generation based on column types and constraints
+  - Integration with existing Swagger UI for seamless developer experience
+- **Status**: ✅ **IMPLEMENTED** - Available endpoints:
+  - `GET /api/swagger/{collectionName}` - Collection-specific OpenAPI
+  - `GET /api/swagger/all` - All collections OpenAPI  
+  - `GET /api/swagger/collections` - List available collections
+
 ### 1.1. Internationalization (i18n)
 - **Description**: A system for creating and managing content in multiple languages. This would allow users to define locales for their `DataCollections` and provide translations for each content entry.
 - **Justification**: Essential for any application targeting a global audience. Without i18n, the CMS is limited to single-language use cases.
@@ -97,3 +110,13 @@ These features go beyond the basics and aim to make Dynamo.CMS a more powerful, 
     *   **Content Summarization**: Automatically generate concise summaries for long-form content.
 - **Justification**: Adds significant value by automating tedious tasks, improving SEO (via alt-text), and enhancing content discoverability.
 - **Potential Implementation**: Integrate with cloud AI providers like **Azure Cognitive Services**, **Google AI Platform**, or **OpenAI** via their respective SDKs.
+
+### 2.9. Enhanced Dynamic Swagger Features
+- **Description**: Extend the existing dynamic Swagger system with advanced capabilities.
+    -   **API Versioning per Collection**: Support for versioned APIs (e.g., `/api/v1/posts`, `/api/v2/posts`)
+    -   **Custom Endpoint Definitions**: Allow users to define custom API endpoints beyond standard CRUD operations
+    -   **OpenAPI Document Caching**: Cache generated OpenAPI documents for better performance
+    -   **Export Functionality**: Allow users to export OpenAPI documents to files for external use
+    -   **Interactive Examples**: Generate sample requests/responses based on actual collection data
+- **Justification**: Builds upon the existing dynamic Swagger foundation to provide enterprise-grade API documentation capabilities.
+- **Potential Implementation**: Extend `DynamicSwaggerService` with caching, versioning support, and custom endpoint configuration. Add export endpoints and enhanced schema generation with real data examples.
