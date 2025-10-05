@@ -22,7 +22,7 @@ builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(Dat
 builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(StorageOptions.OptionsName));
 
 builder.Services.AddSingleton<IFileSystem, FileSystem>();
-//builder.Services.AddSingleton<IFileManager, FileManager>();
+builder.Services.AddSingleton<IFileManager, FileManager>();
 
 builder.Services.AddSingleton<CatalogMapper>();
 builder.Services.AddSingleton<SqlValidator>();
