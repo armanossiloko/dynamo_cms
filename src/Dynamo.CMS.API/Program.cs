@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using System.IO.Abstractions;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,10 @@ var applicationOptions = builder.Configuration.GetSection(ApplicationOptions.Opt
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.OptionsName));
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection(ApplicationOptions.OptionsName));
 builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.OptionsName));
+builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(StorageOptions.OptionsName));
+
+builder.Services.AddSingleton<IFileSystem, FileSystem>();
+//builder.Services.AddSingleton<IFileManager, FileManager>();
 
 builder.Services.AddSingleton<CatalogMapper>();
 builder.Services.AddSingleton<SqlValidator>();
