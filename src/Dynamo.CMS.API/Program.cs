@@ -120,6 +120,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IDynamicSwaggerService, DynamicSwaggerService>();
 
 var app = builder.Build();
 
@@ -189,16 +190,14 @@ if (app.Environment.IsDevelopment())
     {
         options.DocumentTitle = $"{app.Configuration["Application:Name"]} Swagger";
         options.EnableTryItOutByDefault();
-        options.SwaggerEndpoint("/openapi/v1.json", $"{app.Configuration["Application:Name"]}");
+        options.SwaggerEndpoint("/openapi/v1.json", $"{app.Configuration["Application:Name"]} - Main API");
+        options.SwaggerEndpoint("/api/swagger/all?format=json", "All Collections API");
         options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
 
-        //var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-        //foreach (var apiDescription in apiVersionDescriptionProvider.ApiVersionDescriptions)
-        //{
-        //    var endpoint = $"/openapi/{apiDescription.GroupName}.json";
-        //    var name = $"{app.Configuration["Application:Name"]} {apiDescription.ApiVersion}";
-        //    options.SwaggerEndpoint(endpoint, name);
-        //}
+        // Note: Dynamic collection endpoints will be available at runtime
+        // Users can access them via:
+        // - /api/swagger/{collectionName} for specific collections
+        // - /api/swagger/collections to list available collections
     });
     app.MapScalarApiReference(options =>
     {
