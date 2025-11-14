@@ -1,0 +1,32 @@
+meta {
+  name: Media Library - Delete File
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/media/{{fileId}}
+  body: none
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+  fileId: 1
+}
+
+docs {
+  # Delete File from Media Library
+  
+  Deletes both the database record and the physical file.
+  Use with caution - this action cannot be undone.
+}
+

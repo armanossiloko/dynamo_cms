@@ -1,0 +1,63 @@
+meta {
+  name: Create Document with Media Library Files
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/data/documents
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "title": "Document with Media Library Files",
+    "description": "This document references files from the media library",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "document": 1,
+    "attachments": [2, 3, 4]
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
+
+docs {
+  # Create Document with Media Library File References
+  
+  ## How It Works:
+  
+  Instead of uploading files directly, you can reference files from the media library by their ID.
+  
+  ## File Field Values:
+  - `document`: Single file ID (number) - references a file from media library
+  - `attachments`: Array of file IDs - references multiple files from media library
+  
+  ## Workflow:
+  1. Upload files to media library using "Media Library - Upload Files.bru"
+  2. Note the file IDs from the response
+  3. Use those IDs when creating/updating documents
+  
+  ## Example:
+  ```json
+  {
+    "title": "My Document",
+    "document": 1,           // Single file ID
+    "attachments": [2, 3, 4]  // Array of file IDs
+  }
+  ```
+  
+  The system will automatically resolve these IDs to UploadedFile objects.
+}
+

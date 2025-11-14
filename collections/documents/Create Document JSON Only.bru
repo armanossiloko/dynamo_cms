@@ -1,0 +1,42 @@
+meta {
+  name: Create Document JSON Only
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/data/documents
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "title": "Document without file upload",
+    "description": "This document is created without uploading files. Files can be added later via update.",
+    "createdAt": "2024-01-15T10:30:00Z"
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
+
+docs {
+  # Create Document with JSON Only (No File Uploads)
+  
+  This request creates a document without uploading files. 
+  The `document` and `attachments` fields are nullable, so they can be omitted.
+  
+  Files can be added later using the "Update Document with Files" request.
+}
+

@@ -23,6 +23,7 @@ builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(Stor
 
 builder.Services.AddSingleton<IFileSystem, FileSystem>();
 builder.Services.AddSingleton<IFileManager, FileManager>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<CatalogMapper>();
 builder.Services.AddSingleton<SqlValidator>();
@@ -71,7 +72,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        // Allow multipart/form-data without requiring [FromForm] on all parameters
+        options.SuppressConsumesConstraintForFormFileParameters = true;
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -121,6 +127,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IDynamicSwaggerService, DynamicSwaggerService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
 var app = builder.Build();
 
@@ -208,6 +215,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+// Enable request body buffering for JSON requests (needed when manually reading Request.Body)
+app.Use(async (context, next) =>
+{
+    if (context.Request.ContentType?.StartsWith("application/json") == true)
+    {
+        context.Request.EnableBuffering();
+    }
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

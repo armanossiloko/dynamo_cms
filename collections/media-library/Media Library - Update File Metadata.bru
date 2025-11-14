@@ -1,0 +1,40 @@
+meta {
+  name: Media Library - Update File Metadata
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/media/{{fileId}}
+  body: json
+  auth: bearer
+}
+
+body:json {
+  {
+    "displayName": "Updated Display Name",
+    "description": "Updated description"
+  }
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+  fileId: 1
+}
+
+docs {
+  # Update File Metadata
+  
+  Updates the display name and/or description of a file.
+  Both fields are optional - only include fields you want to update.
+}
+

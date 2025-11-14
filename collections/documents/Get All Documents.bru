@@ -1,0 +1,79 @@
+meta {
+  name: Get All Documents
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/data/documents
+  body: none
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
+
+docs {
+  # Get All Documents
+  
+  This request retrieves all documents from the documents collection.
+  
+  ## Response Format:
+  The response will include file objects in the following format:
+  
+  ```json
+  {
+    "data": [
+      {
+        "id": 1,
+        "title": "Sample Document",
+        "description": "Description text",
+        "document": {
+          "id": "123",
+          "displayName": "sample-document.pdf",
+          "description": null,
+          "uploadedAt": "2024-01-15T10:30:00Z",
+          "location": "/path/to/file/sample-document.pdf"
+        },
+        "attachments": [
+          {
+            "id": "124",
+            "displayName": "attachment1.pdf",
+            "location": "/path/to/file/attachment1.pdf",
+            "uploadedAt": "2024-01-15T10:30:00Z"
+          },
+          {
+            "id": "125",
+            "displayName": "attachment2.jpg",
+            "location": "/path/to/file/attachment2.jpg",
+            "uploadedAt": "2024-01-15T10:30:00Z"
+          }
+        ],
+        "createdAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "totalCount": 1,
+    "page": 1,
+    "pageSize": 50,
+    "totalPages": 1
+  }
+  ```
+  
+  ## File Object Structure:
+  - `id`: The database ID of the uploaded file entity
+  - `displayName`: Display name or original filename
+  - `description`: Optional description
+  - `uploadedAt`: Timestamp when the file was uploaded
+  - `location`: File system path where the file is stored
+}
+

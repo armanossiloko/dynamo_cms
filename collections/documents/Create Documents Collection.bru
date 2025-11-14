@@ -1,0 +1,83 @@
+meta {
+  name: Create Documents Collection
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/collections
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "documents",
+    "displayName": "Documents",
+    "columns": [
+      {
+        "name": "id",
+        "displayName": "ID",
+        "baseTypeName": "integer",
+        "nullable": false,
+        "visible": true,
+        "unique": true,
+        "autoIncrement": true
+      },
+      {
+        "name": "title",
+        "displayName": "Title",
+        "baseTypeName": "string",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "description",
+        "displayName": "Description",
+        "baseTypeName": "text",
+        "nullable": true,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "document",
+        "displayName": "Document",
+        "baseTypeName": "file",
+        "nullable": true,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "attachments",
+        "displayName": "Attachments",
+        "baseTypeName": "file[]",
+        "nullable": true,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      },
+      {
+        "name": "createdAt",
+        "displayName": "Created At",
+        "baseTypeName": "datetime",
+        "nullable": false,
+        "visible": true,
+        "unique": false,
+        "autoIncrement": false
+      }
+    ]
+  }
+}
+
+headers {
+  Content-Type: application/json
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
+

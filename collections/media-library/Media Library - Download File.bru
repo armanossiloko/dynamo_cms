@@ -1,0 +1,38 @@
+meta {
+  name: Media Library - Download File
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/media/{{fileId}}/file?download=true
+  body: none
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+  fileId: 1
+}
+
+docs {
+  # Download/Serve File
+  
+  ## Query Parameters:
+  - `download=true`: Forces download with original filename
+  - `download=false` or omit: Serves file inline (for images, PDFs, etc.)
+  
+  ## Usage:
+  - Use this URL in `<img src="...">` tags for images
+  - Use `?download=true` to force file download
+  - File is served with proper Content-Type headers
+}
+

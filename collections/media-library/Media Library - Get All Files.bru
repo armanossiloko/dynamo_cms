@@ -1,0 +1,48 @@
+meta {
+  name: Media Library - Get All Files
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/media?page=1&pageSize=20&sortBy=uploadedAt&sortDescending=true
+  body: none
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
+
+docs {
+  # Get All Files from Media Library
+  
+  ## Query Parameters:
+  - `page`: Page number (default: 1)
+  - `pageSize`: Items per page (default: 50)
+  - `search`: Search in filename, display name, or description
+  - `contentType`: Filter by content type (e.g., "image/png")
+  - `extension`: Filter by file extension (e.g., "pdf")
+  - `uploadedBy`: Filter by uploader user ID
+  - `uploadedAfter`: Filter files uploaded after this date (ISO 8601)
+  - `uploadedBefore`: Filter files uploaded before this date (ISO 8601)
+  - `minSize`: Minimum file size in bytes
+  - `maxSize`: Maximum file size in bytes
+  - `sortBy`: Sort field ("name", "size", "uploadedAt")
+  - `sortDescending`: Sort direction (true/false)
+  
+  ## Examples:
+  - Get images: `?contentType=image`
+  - Search: `?search=logo`
+  - Get PDFs: `?extension=pdf`
+  - Get large files: `?minSize=1048576` (1MB)
+}
+

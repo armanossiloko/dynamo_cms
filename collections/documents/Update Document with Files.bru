@@ -1,0 +1,61 @@
+meta {
+  name: Update Document with Files
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/data/documents/{{documentId}}
+  body: multipart-form
+  auth: bearer
+}
+
+body:multipart-form {
+  title: "Updated Document Title"
+  description: "Updated description"
+  document: @file(updated-document.pdf)
+  attachments: @file(new-attachment1.pdf)
+  attachments: @file(new-attachment2.png)
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+  documentId: 1
+}
+
+docs {
+  # Update Document with File Uploads
+  
+  This request demonstrates how to update a document and upload new files.
+  
+  ## Usage:
+  1. Replace `{{documentId}}` with the actual document ID
+  2. Include any fields you want to update
+  3. Upload new files to replace existing ones
+  
+  ## File Updates:
+  - Uploading a new file to `document` will replace the existing single file
+  - Uploading new files to `attachments` will replace all existing attachments
+  - To keep existing files, don't include the file fields in the update
+  
+  ## Alternative: JSON Update (without file changes)
+  You can also update non-file fields using JSON:
+  
+  ```json
+  {
+    "title": "Updated Title",
+    "description": "Updated description"
+  }
+  ```
+  
+  This will update only the specified fields without changing files.
+}
+

@@ -1,0 +1,50 @@
+meta {
+  name: Media Library - Upload Files
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/media/upload
+  body: multipartForm
+  auth: bearer
+}
+
+body:multipart-form {
+  files: @file(bruno.json)
+  files: @file(Create Documents Collection.bru)
+  displayName: My Uploaded File
+  description: File description here
+  folder: documents
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
+
+docs {
+  # Upload Files to Media Library
+  
+  ## How to Use:
+  1. In Bruno UI, add file fields named `files` (can add multiple)
+  2. Use Bruno's file picker to select files
+  3. Optionally set `displayName`, `description`, and `folder`
+  4. Send the request
+  
+  ## Response:
+  Returns an array of uploaded file objects with metadata and URLs.
+  
+  ## Notes:
+  - Files uploaded here are NOT tied to any collection
+  - They can be used later when creating/updating collection records
+  - Use the `folder` parameter to organize files into folders
+}
+

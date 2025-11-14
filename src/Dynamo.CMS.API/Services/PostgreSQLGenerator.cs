@@ -383,15 +383,45 @@ public class PostgreSQLGenerator
         // AutoIncrement columns should be excluded from the INSERT INTO becasue the database assigns them on its own
         List<DataCollectionColumn> columns = allDataCollectionColumns.Where(x => !x.AutoIncrement).ToList();
         List<string> columnNames = columns.Select(c => c.Name).ToList();
-        string columnsSelector = string.Join(", ", columnNames.Select(column => $"\"{column}\""));
 
         for (int i = 0; i < data.Count; i++)
         {
             JsonElement record = data[i];
             var queryParams = record.EnumerateObject().ToDictionary(el => el.Name, el => el.ToCSharpObject());
-            if (columnNames.Count != queryParams.Keys.Count || !columnNames.All(queryParams.Keys.Contains))
+            
+            // Check that all non-nullable columns are present
+            var nonNullableColumns = columns.Where(c => !c.Nullable).Select(c => c.Name).ToList();
+            var missingRequiredColumns = nonNullableColumns.Where(col => !queryParams.ContainsKey(col)).ToList();
+            
+            if (missingRequiredColumns.Any())
             {
-                throw new InvalidOperationException("All data items must define a value for each expected DataCollection column.");
+                throw new InvalidOperationException(
+                    $"Missing required columns: {string.Join(", ", missingRequiredColumns)}. " +
+                    $"All non-nullable columns must be provided.");
+            }
+            
+            // Ensure all provided columns exist in the collection
+            var invalidColumns = queryParams.Keys.Where(key => !columnNames.Contains(key)).ToList();
+            if (invalidColumns.Any())
+            {
+                throw new InvalidOperationException(
+                    $"Invalid columns provided: {string.Join(", ", invalidColumns)}. " +
+                    $"Valid columns are: {string.Join(", ", columnNames)}");
+            }
+
+            // Only include columns that are provided or are non-nullable
+            var columnsToInsert = columns.Where(c => queryParams.ContainsKey(c.Name) || !c.Nullable).ToList();
+            var columnsToInsertNames = columnsToInsert.Select(c => c.Name).ToList();
+            string columnsSelector = string.Join(", ", columnsToInsertNames.Select(column => $"\"{column}\""));
+
+            // Ensure all columns to insert have entries in parameters (set to null if missing)
+            var finalParams = new Dictionary<string, object?>(queryParams);
+            foreach (var col in columnsToInsert)
+            {
+                if (!finalParams.ContainsKey(col.Name))
+                {
+                    finalParams[col.Name] = null;
+                }
             }
 
             StringBuilder queryBuilder = new();
@@ -399,14 +429,16 @@ public class PostgreSQLGenerator
             queryBuilder.Append("VALUES");
             queryBuilder.Append(' ');
             queryBuilder.Append('(');
-            for (int j = 0; j < columns.Count; j++)
+            for (int j = 0; j < columnsToInsert.Count; j++)
             {
-                DataCollectionColumn column = columns[j];
+                DataCollectionColumn column = columnsToInsert[j];
                 string columnName = column.Name;
-                object? value = queryParams[columnName];
+                object? value = finalParams[columnName];
 
                 queryBuilder.Append($"@{columnName}");
-                if (value is JsonElement reference)
+                
+                // Handle Reference types
+                if (value is JsonElement reference && column.BaseTypeName == "reference")
                 {
                     try
                     {
@@ -418,15 +450,48 @@ public class PostgreSQLGenerator
 
                         var dbDataType = baseTypes.First(d => d.Name == column.BaseTypeName).DbDataType;
                         queryBuilder.Append($"::{dbDataType}");
-                        queryParams[columnName] = JsonSerializer.Serialize(value);
+                        finalParams[columnName] = JsonSerializer.Serialize(value);
                     }
                     catch
                     {
                         throw new InvalidOperationException("Could not deserialize external references to a proper Reference object.");
                     }
                 }
+                // Handle File types (single file or file array)
+                else if (value is JsonElement fileElement && (column.BaseTypeName == "file" || column.BaseTypeName == "file[]"))
+                {
+                    try
+                    {
+                        // Try to deserialize as single file
+                        if (column.BaseTypeName == "file")
+                        {
+                            var fileObject = JsonSerializer.Deserialize<UploadedFile>(fileElement);
+                            if (fileObject is null)
+                            {
+                                throw new NullReferenceException("File data must have a value.");
+                            }
+                        }
+                        // Try to deserialize as file array
+                        else if (column.BaseTypeName == "file[]")
+                        {
+                            var fileArray = JsonSerializer.Deserialize<List<UploadedFile>>(fileElement);
+                            if (fileArray is null)
+                            {
+                                throw new NullReferenceException("File array data must have a value.");
+                            }
+                        }
 
-                if (j < columns.Count - 1)
+                        var dbDataType = baseTypes.First(d => d.Name == column.BaseTypeName).DbDataType;
+                        queryBuilder.Append($"::{dbDataType}");
+                        finalParams[columnName] = JsonSerializer.Serialize(value);
+                    }
+                    catch (JsonException)
+                    {
+                        throw new InvalidOperationException($"Could not deserialize file data to a proper {(column.BaseTypeName == "file" ? "UploadedFile" : "List<UploadedFile>")} object.");
+                    }
+                }
+
+                if (j < columnsToInsert.Count - 1)
                 {
                     queryBuilder.Append(", ");
                 }
@@ -443,7 +508,7 @@ public class PostgreSQLGenerator
             yield return new SqlQuery
             {
                 Query = query,
-                Parameters = queryParams
+                Parameters = finalParams
             };
         }
     }

@@ -1,0 +1,44 @@
+meta {
+  name: Create Document
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/data/documents
+  body: multipartForm
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:multipart-form {
+  title: My Document
+  description: Document description
+  createdAt: 2024-01-15T10:30:00Z
+  attachments: @file(bruno.json)
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+}
+
+docs {
+  # Simple File Upload Request
+  
+  ## File Paths:
+  - Files are relative to the collections folder
+  - `./test.pdf` means a file named `test.pdf` in the collections folder
+  - Update paths to point to your actual files
+  
+  ## To Use:
+  1. Place your files in the collections folder, OR
+  2. Update the paths to point to your files (absolute or relative)
+  3. Send the request
+}

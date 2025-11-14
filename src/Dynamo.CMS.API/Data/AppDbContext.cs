@@ -12,6 +12,8 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
 
     public DbSet<DataCollectionColumn> DataCollectionColumns { get; set; }
 
+    public DbSet<UploadedFileEntity> UploadedFiles { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -34,6 +36,12 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
             .WithOne(e => e.DataCollection)
             .HasForeignKey(e => e.DataCollectionName)
             .IsRequired();
+
+        builder.Entity<UploadedFileEntity>()
+            .HasOne(e => e.Uploader)
+            .WithMany()
+            .HasForeignKey(e => e.UploadedBy)
+            .OnDelete(DeleteBehavior.SetNull);
 
     }
 
@@ -61,6 +69,8 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
             new() { Name = "string", DisplayName = "String", DbDataType = "varchar", DataType = "string", Description = "Variable-length character data" },
             new() { Name = "text", DisplayName = "Text", DbDataType = "text", DataType = "string", Description = "Variable-length text data" },
             new() { Name = "reference", DisplayName = "Reference", DbDataType = GetDataTypeName<Reference>(), DataType = "object", Description = "Reference to another entity" },
+            new() { Name = "file", DisplayName = "File", DbDataType = GetDataTypeName<UploadedFile>(), DataType = "object", Description = "Single file attachment" },
+            new() { Name = "file[]", DisplayName = "File Array", DbDataType = ObjectsNpgsqlType, DataType = "object[]", Description = "Multiple file attachments" },
         };
 
         var existingBaseTypes = BaseTypes.AsNoTracking().ToList();

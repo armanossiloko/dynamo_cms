@@ -1,0 +1,35 @@
+meta {
+  name: Media Library - Get File by ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/media/{{fileId}}
+  body: none
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+vars:pre-request {
+  baseUrl: http://localhost:7000
+  fileId: 1
+}
+
+docs {
+  # Get File Details by ID
+  
+  Returns detailed information about a specific file including:
+  - File metadata (name, size, type, etc.)
+  - Upload information
+  - File URL for access
+  - Thumbnail URL (for images)
+}
+
