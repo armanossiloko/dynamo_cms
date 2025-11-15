@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 export class App {
   protected readonly title = signal('vivicasa-cms-frontend');
   private readonly router = inject(Router);
+  private readonly themeService = inject(ThemeService); // Initialize theme service
 
   protected isLoginRoute(): boolean {
     return this.router.url.startsWith('/login');

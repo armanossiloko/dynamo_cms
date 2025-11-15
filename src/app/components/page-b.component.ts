@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   template: `
     <section class="p-6">
       <h2 class="text-lg font-semibold mb-2">Page B</h2>
-      <p class="text-slate-300">This is a dummy page B.</p>
+      <p class="text-text-secondary">This is a dummy page B.</p>
     </section>
   `
 })

@@ -9,28 +9,28 @@ import { AuthService } from '../auth/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center px-4">
+    <div class="min-h-screen bg-bg-primary text-text-primary flex items-center justify-center px-4">
       <div class="w-full max-w-md">
-        <div class="bg-slate-900/80 border border-white/10 rounded-xl shadow-sm p-6 backdrop-blur">
+        <div class="bg-bg-secondary border border-border-primary rounded-xl shadow-sm p-6">
           <div class="mb-4 flex items-center justify-center">
             <h2 class="text-xl font-semibold">Vivicasa CMS</h2>
             
           </div>
           <form class="space-y-3" [formGroup]="form" (ngSubmit)="onSubmit()">
             <label class="block">
-              <div class="text-xs text-slate-400 mb-1">Email</div>
-              <input class="w-full rounded-md bg-slate-800/60 border border-white/15 px-3 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30" formControlName="email" type="email" required />
+              <div class="text-xs text-text-muted mb-1">Email</div>
+              <input class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent" formControlName="email" type="email" required />
             </label>
             <label class="block">
-              <div class="text-xs text-slate-400 mb-1">Password</div>
-              <input class="w-full rounded-md bg-slate-800/60 border border-white/15 px-3 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30" formControlName="password" type="password" required />
+              <div class="text-xs text-text-muted mb-1">Password</div>
+              <input class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent" formControlName="password" type="password" required />
             </label>
-            <button type="submit" [disabled]="form.invalid || loading()" class="inline-flex w-100 mt-2 items-center justify-center rounded-md border border-white/15 px-4 py-2 hover:bg-white/10 disabled:opacity-60 disabled:cursor-not-allowed">
+            <button type="submit" [disabled]="form.invalid || loading()" class="inline-flex w-100 mt-2 items-center justify-center rounded-md border border-border-primary px-4 py-2 hover:bg-interactive-hover disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
               {{ loading() ? 'Signing in…' : 'Sign in' }}
             </button>
           </form>
-          <div *ngIf="message()" class="text-slate-400 mt-3">{{ message() }}</div>
-          <div *ngIf="error()" class="text-red-400 mt-2">{{ error() }}</div>
+          <div *ngIf="message()" class="text-success mt-3">{{ message() }}</div>
+          <div *ngIf="error()" class="text-error mt-2">{{ error() }}</div>
         </div>
       </div>
     </div>

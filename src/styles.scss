@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* First, import the CSS variables that define RGB values */
+@import "./variables.css";
+
 /* Ensure full viewport coverage */
 html, body {
   margin: 0;
@@ -14,4 +17,73 @@ app-root {
   display: block;
   width: 100%;
   min-height: 100vh;
+}
+
+/* Define custom utility classes using our CSS variables */
+@utility bg-bg-primary {
+  background-color: rgb(var(--color-bg-primary));
+}
+
+@utility bg-bg-secondary {
+  background-color: rgb(var(--color-bg-secondary));
+}
+
+@utility bg-bg-tertiary {
+  background-color: rgb(var(--color-bg-tertiary));
+}
+
+@utility text-text-primary {
+  color: rgb(var(--color-text-primary));
+}
+
+@utility text-text-secondary {
+  color: rgb(var(--color-text-secondary));
+}
+
+@utility text-text-muted {
+  color: rgb(var(--color-text-muted));
+}
+
+@utility text-error {
+  color: rgb(var(--color-error));
+}
+
+@utility text-success {
+  color: rgb(var(--color-success));
+}
+
+@utility text-warning {
+  color: rgb(var(--color-warning));
+}
+
+@utility text-info {
+  color: rgb(var(--color-info));
+}
+
+@utility bg-interactive {
+  background-color: rgb(var(--color-interactive-bg) / var(--color-interactive-bg-opacity));
+}
+
+@utility bg-interactive-hover {
+  background-color: rgb(var(--color-interactive-hover) / var(--color-interactive-hover-opacity));
+}
+
+@utility border-border-primary {
+  border-color: rgb(var(--color-border-primary) / var(--color-border-opacity));
+}
+
+@utility bg-input {
+  background-color: rgb(var(--color-input-bg) / var(--color-input-bg-opacity));
+}
+
+@utility border-input {
+  border-color: rgb(var(--color-input-border) / var(--color-input-border-opacity));
+}
+
+@utility ring-focus {
+  --tw-ring-color: rgb(var(--color-ring) / var(--color-ring-opacity));
+}
+
+@utility backdrop-blur-theme {
+  backdrop-filter: var(--backdrop-blur);
 }
