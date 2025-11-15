@@ -1,6 +1,7 @@
 using Dynamo.CMS.API.Data;
 using Dynamo.CMS.API.Models;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Abstractions;
 
 namespace Dynamo.CMS.API.Services;
 
@@ -38,15 +39,19 @@ public class FileUploadService : IFileUploadService
     private readonly IFileManager _fileManager;
     private readonly AppDbContext _context;
     private readonly ILogger<FileUploadService> _logger;
+    private readonly IFileSystem _fileSystem;
 
     public FileUploadService(
         IFileManager fileManager,
         AppDbContext context,
-        ILogger<FileUploadService> logger)
+        ILogger<FileUploadService> logger,
+        IFileSystem fileSystem
+        )
     {
         _fileManager = fileManager;
         _context = context;
         _logger = logger;
+        _fileSystem = fileSystem;
     }
 
     public async Task<List<UploadedFile>> UploadFilesAsync(
@@ -84,7 +89,7 @@ public class FileUploadService : IFileUploadService
                 // Create entity in database
                 var fileEntity = new UploadedFileEntity
                 {
-                    FileName = System.IO.Path.GetFileName(filePath),
+                    FileName = _fileSystem.Path.GetFileName(filePath),
                     OriginalFileName = file.FileName,
                     FilePath = filePath,
                     ContentType = file.ContentType,

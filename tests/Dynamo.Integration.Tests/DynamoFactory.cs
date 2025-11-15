@@ -70,7 +70,7 @@ public class DynamoFactory : WebApplicationFactory<Program>, IAsyncLifetime
             {
                 ["ConnectionStrings:Database"] = _dbContainer.GetConnectionString(),
                 [$"{ApplicationOptions.OptionsName}:{nameof(ApplicationOptions.Name)}"] = "Dynamo Integration Test(s)",
-                [$"{ApplicationOptions.OptionsName}:{DatabaseOptions.OptionsName}:{nameof(DatabaseOptions.DatabaseProvider)}"] = "PostgreSQL",
+                //[$"{ApplicationOptions.OptionsName}:{DatabaseOptions.OptionsName}:{nameof(DatabaseOptions.DatabaseProvider)}"] = "PostgreSQL",
             };
             builder.AddInMemoryCollection(defaultConfiguration);
 

@@ -14,11 +14,9 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.OptionsName).Get<JwtOptions>()!;
-var applicationOptions = builder.Configuration.GetSection(ApplicationOptions.OptionsName).Get<ApplicationOptions>()!;
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.OptionsName));
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection(ApplicationOptions.OptionsName));
-builder.Services.Configure<DatabaseOptions>(builder.Configuration.GetSection(DatabaseOptions.OptionsName));
 builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(StorageOptions.OptionsName));
 
 builder.Services.AddSingleton<IFileSystem, FileSystem>();

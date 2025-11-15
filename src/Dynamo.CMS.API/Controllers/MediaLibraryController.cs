@@ -92,7 +92,7 @@ public class MediaLibraryController : ControllerBase
                     // Create entity
                     var fileEntity = new UploadedFileEntity
                     {
-                        FileName = System.IO.Path.GetFileName(filePath),
+                        FileName = _fileSystem.Path.GetFileName(filePath),
                         OriginalFileName = file.FileName,
                         FilePath = filePath,
                         ContentType = file.ContentType,
@@ -145,9 +145,6 @@ public class MediaLibraryController : ControllerBase
             var query = _context.UploadedFiles
                 .Include(f => f.Uploader)
                 .AsQueryable();
-
-            // Filter: Media library files only (not tied to collections)
-            //query = query.Where(f => f.CollectionName == null);
 
             // Apply filters
             if (!string.IsNullOrWhiteSpace(filter?.Search))

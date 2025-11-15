@@ -100,8 +100,6 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
 
     private static readonly Dictionary<Type, string> _types = new()
     {
-        //{ typeof(Size), ObjectsNpgsqlType },
-        //{ typeof(Position), ObjectsNpgsqlType },
         { typeof(Reference), ObjectsNpgsqlType },
         { typeof(UploadedFile), ObjectsNpgsqlType },
     };

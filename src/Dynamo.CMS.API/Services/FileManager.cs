@@ -114,7 +114,6 @@ public class FileManager : IFileManager
         }
 
         await using var fs = _fileSystem.FileStream.New(fi.FullName, FileMode.CreateNew);
-        //await using FileStream fs = new(fi.FullName, FileMode.CreateNew);
         await file.CopyToAsync(fs, cancellationToken);
         return destination;
     }
