@@ -73,11 +73,14 @@ public class DataCollectionsController : ControllerBase
                     referencedDataCollections.Add(c.Reference);
                 }
 
+                // Convert column name to camelCase
+                var camelCaseName = c.Name.ToCamelCase();
+
                 return new TableColumnInfo
                 {
                     DbDataType = baseType.DbDataType,
                     Nullable = c.Nullable,
-                    Name = c.Name,
+                    Name = camelCaseName,
                     DisplayName = c.DisplayName,
                     Unique = c.Unique,
                     AutoIncrement = c.AutoIncrement,
@@ -109,7 +112,7 @@ public class DataCollectionsController : ControllerBase
             {
                 DataCollection = dataCollection,
                 BaseTypeName = baseTypes.First(b => b.Name == c.BaseTypeName).Name,
-                Name = c.Name,
+                Name = c.Name.ToCamelCase(), // Convert to camelCase
                 DisplayName = c.DisplayName,
                 Nullable = c.Nullable,
                 Visible = c.Visible,
@@ -161,11 +164,16 @@ public class DataCollectionsController : ControllerBase
                     baseType = baseTypes.First(b => b.Name == column.BaseTypeName);
                 }
 
+                // Convert column name to camelCase for new/renamed columns
+                var columnName = column.Action == ColumnAlterationType.Add || column.Action == ColumnAlterationType.Rename
+                    ? column.Name.ToCamelCase()
+                    : column.Name;
+
                 var alterStatement = _sqlGenerator.GenerateAlterTableSql(dataCollection.Name, column.Action, new TableColumnInfo
                 {
-                    Name = column.Name,
+                    Name = columnName,
                     DbDataType = baseType?.DbDataType,
-                    OldName = column.OldName,
+                    OldName = column.OldName?.ToCamelCase(),
                     Nullable = column.Nullable ?? true,
                     DisplayName = column.DisplayName,
                 });
@@ -180,9 +188,12 @@ public class DataCollectionsController : ControllerBase
                                 throw new Exception("BaseType must be defined for new columns.");
                             }
 
+                            // Convert column name to camelCase
+                            var camelCaseName = column.Name.ToCamelCase();
+
                             var newColumn = new DataCollectionColumn
                             {
-                                Name = column.Name,
+                                Name = camelCaseName,
                                 DisplayName = column.DisplayName,
                                 Nullable = column.Nullable ?? true,
                                 Visible = column.Visible ?? true,
@@ -199,7 +210,8 @@ public class DataCollectionsController : ControllerBase
                             var oldColumn = dataCollection.Columns.FirstOrDefault(c => c.Name == (column.OldName ?? column.Name) && c.DataCollectionName == dataCollection.Name)!;
                             // Define when something is null or not (e.g Name vs OldName)
                             oldColumn.DisplayName = column.DisplayName ?? oldColumn.DisplayName;
-                            oldColumn.Name = column.Name;
+                            // Convert new column name to camelCase
+                            oldColumn.Name = column.Name.ToCamelCase();
                             if (baseType is not null)
                             {
                                 oldColumn.BaseTypeName = baseType.Name;

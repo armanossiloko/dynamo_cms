@@ -124,6 +124,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IDynamicSwaggerService, DynamicSwaggerService>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 

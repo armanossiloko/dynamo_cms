@@ -172,17 +172,21 @@ public class PostgreSQLGenerator
         FilterConditionDTO? where = null
         )
     {
-        var columnsSelector = string.Join(", ", columns.Select(c =>
-        {
-            if (string.IsNullOrWhiteSpace(c.DisplayName))
-            {
-                return $"\"{c.Name}\"";
-            }
-            else
-            {
-                return $"\"{c.Name}\" as \"{c.DisplayName}\"";
-            }
-        }));
+        //var columnsSelector = string.Join(", ", columns.Select(c =>
+        //{
+        //    if (string.IsNullOrWhiteSpace(c.DisplayName))
+        //    {
+        //        return $"\"{c.Name}\"";
+        //    }
+        //    else
+        //    {
+        //        return $"\"{c.Name}\" as \"{c.DisplayName}\"";
+        //    }
+        //}));
+
+        // Always use the column Name (camelCase) in JSON responses, not DisplayName
+        // DisplayName is only for UI purposes
+        var columnsSelector = string.Join(", ", columns.Select(c => $"\"{c.Name}\""));
 
         var queryBuilder = new StringBuilder();
         queryBuilder.Append("SELECT ");
