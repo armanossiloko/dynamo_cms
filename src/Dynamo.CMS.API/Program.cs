@@ -192,23 +192,47 @@ if (app.Environment.IsDevelopment())
     {
         options.RouteTemplate = "/openapi/{documentName}.{extension:regex(^(json|ya?ml)$)}";
     });
+    
+    // Note: Dynamic collection endpoints will be available at runtime
+    // Users can access them via:
+    // - /api/swagger/{collectionName} for specific collections
+    // - /api/swagger/collections to list available collections
     app.UseSwaggerUI(options =>
     {
+        options.RoutePrefix = "swagger";
         options.DocumentTitle = $"{app.Configuration["Application:Name"]} Swagger";
         options.EnableTryItOutByDefault();
-        options.SwaggerEndpoint("/openapi/v1.json", $"{app.Configuration["Application:Name"]} - Main API");
+        options.SwaggerEndpoint("/openapi/v1.json", "Default API v1");
+        options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+    });
+    app.UseSwaggerUI(options =>
+    {
+        options.RoutePrefix = "swagger/all";
+        options.DocumentTitle = $"{app.Configuration["Application:Name"]} - All Collections API";
+        options.EnableTryItOutByDefault();
         options.SwaggerEndpoint("/api/swagger/all?format=json", "All Collections API");
         options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-
-        // Note: Dynamic collection endpoints will be available at runtime
-        // Users can access them via:
-        // - /api/swagger/{collectionName} for specific collections
-        // - /api/swagger/collections to list available collections
     });
-    app.MapScalarApiReference(options =>
+
+    app.MapScalarApiReference("scalar", options =>
     {
-        options.Title = $"{app.Configuration["Application:Name"]} Scalar UI";
-        options.WithFavicon("/favicon.ico");
+        options
+            .WithTitle($"{app.Configuration["Application:Name"]} Scalar")
+            .WithFavicon("/favicon.ico")
+            .WithOpenApiRoutePattern("/openapi/v1.json")
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+        options.WithDefaultOpenAllTags(false);
+    });
+    app.MapScalarApiReference("scalar/all", options =>
+    {
+        options
+            .WithTitle($"{app.Configuration["Application:Name"]} - All Collections API")
+            .WithFavicon("/favicon.ico")
+            .WithOpenApiRoutePattern("/api/swagger/all")
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+
+        options.WithDefaultOpenAllTags(false);
     });
 }
 
