@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "vivicasa-cms-frontend": {
+    "dynamo-cms-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -61,10 +61,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "vivicasa-cms-frontend:build:production"
+              "buildTarget": "dynamo-cms-frontend:build:production"
             },
             "development": {
-              "buildTarget": "vivicasa-cms-frontend:build:development"
+              "buildTarget": "dynamo-cms-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

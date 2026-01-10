@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { ThemeService } from './services/theme.service';
+import { AppConfig } from './config/app.config';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,8 @@ import { ThemeService } from './services/theme.service';
   styleUrls: ['./app.css']
 })
 export class App {
-  protected readonly title = signal('vivicasa-cms-frontend');
+  private readonly appConfig = inject(AppConfig);
+  protected readonly title = signal(this.appConfig.appName);
   private readonly router = inject(Router);
   private readonly themeService = inject(ThemeService); // Initialize theme service
 

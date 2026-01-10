@@ -1,19 +1,22 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { LoginRequest } from '../models/auth.model';
+import { AppConfig } from '../config/app.config';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="min-h-screen bg-bg-primary text-text-primary flex items-center justify-center px-4">
       <div class="w-full max-w-md">
         <div class="bg-bg-secondary border border-border-primary rounded-xl shadow-sm p-6">
           <div class="mb-4 flex items-center justify-center">
-            <h2 class="text-xl font-semibold">Vivicasa CMS</h2>
+            <h2 class="text-xl font-semibold">{{ appConfig.appName }}</h2>
             
           </div>
           <form class="space-y-3" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -40,38 +43,54 @@ export class LoginComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  protected readonly appConfig = inject(AppConfig);
   protected readonly message = signal<string>('');
   protected readonly error = signal<string>('');
   protected readonly loading = signal<boolean>(false);
 
   protected readonly form = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    email: ['admin@dynamo.com', [Validators.required, Validators.email]],
+    password: ['Dynamo123!', [Validators.required, Validators.minLength(6)]]
   });
 
-  protected onSubmit(): void {
+  protected async onSubmit(): Promise<void> {
     if (this.form.invalid || this.loading()) return;
     this.message.set('');
     this.error.set('');
     this.loading.set(true);
-    const { email, password } = this.form.getRawValue();
-    this.auth.login({ email: email ?? '', password: password ?? '' }).subscribe({
-      next: (res) => {
+    
+    try {
+      const { email, password } = this.form.getRawValue();
+      const loginRequest: LoginRequest = { email: email ?? '', password: password ?? '' };
+      const res = await firstValueFrom(this.auth.login(loginRequest));
+      
+      const token = res?.accessToken || res?.token;
+      if (token) {
+        // Save token first
+        sessionStorage.setItem('auth_token', token);
+        
+        // Clear any previous errors
+        this.error.set('');
         this.loading.set(false);
-        if (res?.token) {
-          try {
-            sessionStorage.setItem('auth_token', res.token);
-          } catch {}
+        
+        // Navigate to home - the redirect to collections will happen automatically
+        const navigationSuccess = await this.router.navigateByUrl('/home');
+        
+        if (!navigationSuccess) {
+          console.error('Navigation failed - redirecting manually');
+          // Fallback: try direct navigation to collections
+          await this.router.navigateByUrl('/home/collections');
         }
-        this.message.set('Login successful');
-        this.router.navigateByUrl('/home');
-      },
-      error: (err) => {
+      } else {
         this.loading.set(false);
-        const msg = err?.error?.message || err?.message || 'Login failed';
-        this.error.set(msg);
+        this.error.set('Login failed: No authentication token received from server');
       }
-    });
+    } catch (err: any) {
+      this.loading.set(false);
+      console.error('Login error:', err);
+      const msg = err?.error?.message || err?.message || 'Login failed. Please check your credentials.';
+      this.error.set(msg);
+    }
   }
 }
 

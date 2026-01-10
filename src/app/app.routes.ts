@@ -2,8 +2,13 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login.component';
 import { HomeComponent } from './components/home.component';
 import { authGuard } from './auth/auth.guard';
-import { PageAComponent } from './components/page-a.component';
-import { PageBComponent } from './components/page-b.component';
+import { CollectionsListComponent } from './components/collections/collections-list.component';
+import { DataListComponent } from './components/data/data-list.component';
+import { MediaLibraryComponent } from './components/media/media-library.component';
+import { SwaggerViewerComponent } from './components/swagger/swagger-viewer.component';
+import { RegisterComponent } from './components/register.component';
+import { UsersListComponent } from './components/users/users-list.component';
+import { UserDetailComponent } from './components/users/user-detail.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -13,9 +18,14 @@ export const routes: Routes = [
     component: HomeComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'page-a', pathMatch: 'full' },
-      { path: 'page-a', component: PageAComponent },
-      { path: 'page-b', component: PageBComponent }
+      { path: '', redirectTo: 'collections', pathMatch: 'full' },
+      { path: 'collections', component: CollectionsListComponent },
+      { path: 'data/:collectionName', component: DataListComponent },
+      { path: 'media', component: MediaLibraryComponent },
+      { path: 'swagger', component: SwaggerViewerComponent },
+      { path: 'users', component: UsersListComponent },
+      { path: 'users/:id', component: UserDetailComponent },
+      { path: 'register', component: RegisterComponent }
     ]
   },
   { path: '**', redirectTo: 'login' }

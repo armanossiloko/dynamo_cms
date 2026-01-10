@@ -1,5 +1,5 @@
 {
-  "name": "vivicasa-cms-frontend",
+  "name": "dynamo-cms-frontend",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -33,6 +33,7 @@
     "@tailwindcss/postcss": "^4.1.13",
     "postcss": "^8.5.6",
     "rxjs": "~7.8.0",
+    "swagger-ui-dist": "^5.31.0",
     "tailwindcss": "^4.1.13",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
