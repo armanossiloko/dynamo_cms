@@ -1,0 +1,96 @@
+/* ===========================================
+   CSS Variables for Theming
+   =========================================== */
+
+:root {
+  /* Primary Background Colors */
+  --color-bg-primary: 2 6 23; /* slate-950 */
+  --color-bg-secondary: 15 23 42; /* slate-900 */
+  --color-bg-tertiary: 30 41 59; /* slate-800 */
+  
+  /* Text Colors */
+  --color-text-primary: 241 245 249; /* slate-100 */
+  --color-text-secondary: 203 213 225; /* slate-300 */
+  --color-text-muted: 148 163 184; /* slate-400 */
+  
+  /* Border Colors */
+  --color-border-primary: 255 255 255; /* white with opacity */
+  --color-border-opacity: 0.1;
+  --color-border-hover: 255 255 255;
+  --color-border-hover-opacity: 0.15;
+  
+  /* Interactive Elements */
+  --color-interactive-bg: 255 255 255;
+  --color-interactive-bg-opacity: 0.1;
+  --color-interactive-hover: 255 255 255;
+  --color-interactive-hover-opacity: 0.15;
+  
+  /* Focus/Ring Colors */
+  --color-ring: 255 255 255;
+  --color-ring-opacity: 0.3;
+  
+  /* Input Fields */
+  --color-input-bg: 30 41 59; /* slate-800 */
+  --color-input-bg-opacity: 0.6;
+  --color-input-border: 255 255 255;
+  --color-input-border-opacity: 0.15;
+  --color-input-placeholder: 148 163 184; /* slate-400 */
+  
+  /* Error/Success Colors */
+  --color-error: 248 113 113; /* red-400 */
+  --color-success: 74 222 128; /* green-400 */
+  --color-warning: 251 191 36; /* amber-400 */
+  --color-info: 96 165 250; /* blue-400 */
+  
+  /* Backdrop */
+  --backdrop-blur: blur(8px);
+  --backdrop-opacity: 0.8;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  /* Primary Background Colors */
+  --color-bg-primary: 248 250 252; /* slate-50 */
+  --color-bg-secondary: 241 245 249; /* slate-100 */
+  --color-bg-tertiary: 226 232 240; /* slate-200 */
+  
+  /* Text Colors */
+  --color-text-primary: 15 23 42; /* slate-900 */
+  --color-text-secondary: 51 65 85; /* slate-700 */
+  --color-text-muted: 100 116 139; /* slate-500 */
+  
+  /* Border Colors */
+  --color-border-primary: 0 0 0;
+  --color-border-opacity: 0.1;
+  --color-border-hover: 0 0 0;
+  --color-border-hover-opacity: 0.2;
+  
+  /* Interactive Elements */
+  --color-interactive-bg: 0 0 0;
+  --color-interactive-bg-opacity: 0.05;
+  --color-interactive-hover: 0 0 0;
+  --color-interactive-hover-opacity: 0.1;
+  
+  /* Focus/Ring Colors */
+  --color-ring: 59 130 246; /* blue-500 */
+  --color-ring-opacity: 0.5;
+  
+  /* Input Fields */
+  --color-input-bg: 255 255 255;
+  --color-input-bg-opacity: 1;
+  --color-input-border: 203 213 225; /* slate-300 */
+  --color-input-border-opacity: 1;
+  --color-input-placeholder: 148 163 184; /* slate-400 */
+  
+  /* Error/Success Colors (keep same for consistency) */
+  --color-error: 239 68 68; /* red-500 */
+  --color-success: 34 197 94; /* green-500 */
+  --color-warning: 245 158 11; /* amber-500 */
+  --color-info: 59 130 246; /* blue-500 */
+  
+  /* Backdrop */
+  --backdrop-blur: blur(8px);
+  --backdrop-opacity: 0.95;
+}
+
+

@@ -1,0 +1,44 @@
+/* Make the container full-width */
+.container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure the main element takes full height */
+main {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Reset any default container styles from Tailwind */
+@media (min-width: 640px) {
+  .container {
+    max-width: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: none;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: none;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: none;
+  }
+}
