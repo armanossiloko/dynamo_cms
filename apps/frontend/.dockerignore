@@ -1,0 +1,15 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/.vscode
+**/.idea
+**/node_modules
+**/npm-debug.log
+**/dist
+**/.angular
+**/.DS_Store
+**/README.md
+**/e2e
+**/coverage
+**/.nyc_output
+**/*.log

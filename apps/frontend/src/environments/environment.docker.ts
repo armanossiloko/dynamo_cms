@@ -1,5 +1,6 @@
 /**
- * Production environment configuration
+ * Docker environment configuration
+ * Used when building the frontend for Docker deployment
  */
 export const environment = {
   production: true,
