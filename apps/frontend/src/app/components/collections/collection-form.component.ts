@@ -204,7 +204,7 @@ interface ColumnFormData {
                             <div class="text-xs text-text-muted">Show in admin panel</div>
                           </div>
                         </label>
-                        <label class="flex items-start gap-2 cursor-pointer">
+                        <label class="flex items-start gap-2" [class.cursor-pointer]="!columnGroup.get('isExisting')?.value" [class.cursor-not-allowed]="columnGroup.get('isExisting')?.value">
                           <input 
                             type="checkbox" 
                             formControlName="unique" 
@@ -215,15 +215,21 @@ interface ColumnFormData {
                             <div class="text-xs text-text-muted">Enforce uniqueness</div>
                           </div>
                         </label>
-                        <label class="flex items-start gap-2 cursor-pointer">
+                        <label class="flex items-start gap-2" [class.cursor-pointer]="canAutoIncrement(columnGroup)" [class.cursor-not-allowed]="!canAutoIncrement(columnGroup)">
                           <input 
                             type="checkbox" 
                             formControlName="autoIncrement" 
-                            [disabled]="columnGroup.get('isExisting')?.value"
+                            [disabled]="!canAutoIncrement(columnGroup)"
                             class="mt-1 rounded border-border-primary disabled:opacity-60 disabled:cursor-not-allowed">
                           <div>
                             <div class="text-sm font-medium text-text-primary">Auto Increment</div>
-                            <div class="text-xs text-text-muted">Auto-generate values</div>
+                            <div class="text-xs text-text-muted">
+                              @if (canAutoIncrement(columnGroup)) {
+                                Auto-generate values
+                              } @else {
+                                Only for numeric types
+                              }
+                            </div>
                           </div>
                         </label>
                       </div>
@@ -309,6 +315,17 @@ export class CollectionFormComponent implements OnInit, OnChanges {
         autoIncrement: [col.autoIncrement ?? false],
         isExisting: [true] // Mark as existing column
       });
+      
+      // Watch for base type changes on existing columns (only if not auto-increment already)
+      if (!col.autoIncrement) {
+        columnGroup.get('baseTypeName')?.valueChanges.subscribe(baseTypeName => {
+          const autoIncrementableTypes = ['integer', 'bigint', 'decimal'];
+          if (baseTypeName && !autoIncrementableTypes.includes(baseTypeName)) {
+            columnGroup.get('autoIncrement')?.setValue(false, { emitEvent: false });
+          }
+        });
+      }
+      
       // Expand existing columns by default
       this.expandedColumns.update(set => {
         set.add(index);
@@ -336,6 +353,15 @@ export class CollectionFormComponent implements OnInit, OnChanges {
       autoIncrement: [false],
       isExisting: [false]
     });
+    
+    // Watch for base type changes and disable auto-increment if not numeric
+    columnGroup.get('baseTypeName')?.valueChanges.subscribe(baseTypeName => {
+      const autoIncrementableTypes = ['integer', 'bigint', 'decimal'];
+      if (baseTypeName && !autoIncrementableTypes.includes(baseTypeName)) {
+        columnGroup.get('autoIncrement')?.setValue(false, { emitEvent: false });
+      }
+    });
+    
     const index = this.columnsArray.length;
     this.columnsArray.push(columnGroup);
     // Expand new columns
@@ -391,6 +417,18 @@ export class CollectionFormComponent implements OnInit, OnChanges {
   getBaseTypeDisplayName(baseTypeName: string): string {
     const baseType = this.baseTypes().find(t => t.name === baseTypeName);
     return baseType?.displayName || baseTypeName;
+  }
+
+  canAutoIncrement(columnGroup: any): boolean {
+    const isExisting = columnGroup.get('isExisting')?.value;
+    if (isExisting) {
+      return false; // Cannot change auto-increment on existing fields
+    }
+    
+    const baseTypeName = columnGroup.get('baseTypeName')?.value;
+    // Only numeric types can auto-increment
+    const autoIncrementableTypes = ['integer', 'bigint', 'decimal'];
+    return autoIncrementableTypes.includes(baseTypeName);
   }
 
   onSubmit(): void {

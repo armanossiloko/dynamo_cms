@@ -6,12 +6,11 @@ import { NgIconComponent } from '@ng-icons/core';
 import { heroArrowLeft, heroShieldCheck, heroCheckCircle, heroXCircle } from '@ng-icons/heroicons/outline';
 import { UsersService } from '../../services/users.service';
 import { User, UserUpdate, ResetPassword } from '../../models/user.model';
-import { ModalComponent } from '../shared/modal.component';
 
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgIconComponent, ModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, NgIconComponent],
   template: `
     <div class="p-6 max-w-4xl mx-auto space-y-6">
       <div class="flex items-center gap-4">

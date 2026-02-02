@@ -382,7 +382,7 @@ public class MediaLibraryController : ControllerBase
         try
         {
             var fileEntity = await _context.UploadedFiles
-                .FirstOrDefaultAsync(f => f.Id == id && f.CollectionName == null);
+                .FirstOrDefaultAsync(f => f.Id == id);
 
             if (fileEntity == null)
             {

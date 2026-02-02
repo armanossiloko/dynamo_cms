@@ -113,8 +113,8 @@ import { ModalComponent } from '../shared/modal.component';
       }
 
       <app-modal 
-        [title]="deleteModalTitle"
-        [isOpen]="showDeleteModal"
+        [title]="deleteModalTitle()"
+        [isOpen]="showDeleteModal()"
         (closed)="closeDeleteModal()">
         <div class="space-y-4">
           <p class="text-text-primary">

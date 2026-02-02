@@ -64,8 +64,8 @@ import { CollectionFormComponent } from './collection-form.component';
       }
 
       <app-modal 
-        [title]="modalTitle"
-        [isOpen]="showModal"
+        [title]="modalTitle()"
+        [isOpen]="showModal()"
         (closed)="closeModal()">
         <app-collection-form 
           [collection]="selectedCollection()"

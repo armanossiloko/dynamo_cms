@@ -128,8 +128,8 @@ import { MediaFileEditComponent } from './media-file-edit.component';
       }
 
       <app-modal 
-        [title]="uploadModalTitle"
-        [isOpen]="showUploadModal"
+        [title]="uploadModalTitle()"
+        [isOpen]="showUploadModal()"
         (closed)="closeUploadModal()">
         <app-file-upload
           [label]="uploadLabel"
@@ -148,8 +148,8 @@ import { MediaFileEditComponent } from './media-file-edit.component';
       </app-modal>
 
       <app-modal 
-        [title]="editModalTitle"
-        [isOpen]="showEditModal"
+        [title]="editModalTitle()"
+        [isOpen]="showEditModal()"
         (closed)="closeEditModal()">
         <app-media-file-edit
           [file]="selectedFile()!"

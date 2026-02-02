@@ -1,9 +1,10 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { NgIconComponent } from '@ng-icons/core';
-import { heroPlus, heroPencilSquare, heroTrash, heroMagnifyingGlass } from '@ng-icons/heroicons/outline';
+import { heroPlus, heroPencilSquare, heroTrash, heroMagnifyingGlass, heroDocumentText, heroPaperClip } from '@ng-icons/heroicons/outline';
 import { DataService } from '../../services/data.service';
 import { CollectionsService } from '../../services/collections.service';
 import { DataCollection } from '../../models/collections.model';
@@ -14,7 +15,7 @@ import { DataFormComponent } from './data-form.component';
 @Component({
   selector: 'app-data-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NgIconComponent, ModalComponent, DataFormComponent],
+  imports: [CommonModule, FormsModule, NgIconComponent, ModalComponent, DataFormComponent],
   template: `
     <div class="p-6 space-y-4">
       <div class="flex items-center justify-between">
@@ -81,7 +82,26 @@ import { DataFormComponent } from './data-form.component';
                 <tr class="border-b border-border-primary hover:bg-interactive-hover transition-colors">
                   @for (column of visibleColumns(); track column.name) {
                     <td class="px-4 py-3 text-sm text-text-primary">
-                      {{ formatValue(row[column.name], column.baseType) }}
+                      @if (isFileType(column.baseType) && getFileInfo(row[column.name], column.baseType)) {
+                        <div class="flex flex-wrap gap-1.5">
+                          @for (file of getFileInfo(row[column.name], column.baseType); track file.id) {
+                            <button
+                              (click)="downloadFile(file)"
+                              class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-info/10 hover:bg-info/20 text-info rounded-lg text-xs border border-info/20 hover:border-info/40 transition-all cursor-pointer group"
+                              [title]="'Click to download: ' + (file.displayName || file.fileName)">
+                              <span class="text-sm">{{ getFileIcon(file.displayName || file.fileName || '') }}</span>
+                              <span class="max-w-[120px] truncate font-medium">
+                                {{ file.displayName || file.fileName }}
+                              </span>
+                              <span class="text-[10px] opacity-60 group-hover:opacity-100 uppercase">
+                                {{ getFileExtension(file.displayName || file.fileName || '') }}
+                              </span>
+                            </button>
+                          }
+                        </div>
+                      } @else {
+                        {{ formatValue(row[column.name], column.baseType) }}
+                      }
                     </td>
                   }
                   <td class="px-4 py-3">
@@ -131,8 +151,8 @@ import { DataFormComponent } from './data-form.component';
       }
 
       <app-modal 
-        [title]="modalTitle"
-        [isOpen]="showModal"
+        [title]="modalTitle()"
+        [isOpen]="showModal()"
         (closed)="closeModal()">
         <app-data-form 
           [collection]="collection()!"
@@ -149,6 +169,7 @@ export class DataListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dataService = inject(DataService);
   private readonly collectionsService = inject(CollectionsService);
+  private readonly http = inject(HttpClient);
 
   collectionName = signal<string>('');
   collection = signal<DataCollection | null>(null);
@@ -241,10 +262,73 @@ export class DataListComponent implements OnInit {
     if (baseType === 'boolean' && typeof value === 'boolean') {
       return value ? 'Yes' : 'No';
     }
+    
+    // Handle file types (including JSON strings from API)
+    if (baseType === 'file' || baseType === 'file[]') {
+      let parsedValue = value;
+      
+      // Parse JSON string if needed
+      if (typeof value === 'string') {
+        try {
+          parsedValue = JSON.parse(value);
+        } catch (e) {
+          return String(value); // Return as-is if parsing fails
+        }
+      }
+      
+      if (baseType === 'file' && typeof parsedValue === 'object' && parsedValue !== null) {
+        return parsedValue.displayName || parsedValue.fileName || 'File';
+      }
+      
+      if (baseType === 'file[]' && Array.isArray(parsedValue)) {
+        return `${parsedValue.length} file(s)`;
+      }
+    }
+    
     if (typeof value === 'object') {
       return JSON.stringify(value);
     }
     return String(value);
+  }
+
+  isFileType(baseType?: string): boolean {
+    return baseType === 'file' || baseType === 'file[]';
+  }
+
+  getFileInfo(value: any, baseType?: string): any {
+    if (!value || !this.isFileType(baseType)) return null;
+    
+    // Handle JSON string (when API returns stringified JSON)
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        if (baseType === 'file' && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          return [parsed]; // Wrap single file in array
+        }
+        if (baseType === 'file[]' && Array.isArray(parsed)) {
+          return parsed;
+        }
+        // If it's a string but parsed to wrong type, treat as single file object
+        if (typeof parsed === 'object') {
+          return Array.isArray(parsed) ? parsed : [parsed];
+        }
+      } catch (e) {
+        // If JSON parsing fails, it's not a valid file object
+        console.warn('Failed to parse file JSON:', e);
+        return null;
+      }
+    }
+    
+    // Handle already parsed objects
+    if (baseType === 'file' && typeof value === 'object' && !Array.isArray(value)) {
+      return [value]; // Wrap single file in array for consistent handling
+    }
+    
+    if (baseType === 'file[]' && Array.isArray(value)) {
+      return value;
+    }
+    
+    return null;
   }
 
   openCreateModal(): void {
@@ -286,6 +370,72 @@ export class DataListComponent implements OnInit {
       error: (err) => {
         console.error('Error deleting entry:', err);
         alert('Failed to delete entry');
+      }
+    });
+  }
+
+  getFileExtension(fileName: string): string {
+    if (!fileName) return '';
+    const parts = fileName.split('.');
+    return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+  }
+
+  getFileIcon(fileName: string): string {
+    const ext = this.getFileExtension(fileName);
+    const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
+    const videoExts = ['mp4', 'webm', 'mov', 'avi', 'mkv'];
+    const docExts = ['pdf', 'doc', 'docx', 'txt', 'md'];
+    
+    if (imageExts.includes(ext)) return '🖼️';
+    if (videoExts.includes(ext)) return '🎥';
+    if (docExts.includes(ext)) return '📄';
+    return '📎';
+  }
+
+  downloadFile(file: any): void {
+    if (!file.id) {
+      console.error('File ID not available');
+      return;
+    }
+    
+    // Construct download URL using the backend API endpoint
+    const apiUrl = 'https://localhost:7001/api/media';
+    const downloadUrl = `${apiUrl}/${file.id}/file?download=true`;
+    
+    // Use HttpClient to download with authentication
+    this.http.get(downloadUrl, { 
+      responseType: 'blob',
+      observe: 'response'
+    }).subscribe({
+      next: (response) => {
+        const blob = response.body;
+        if (!blob) return;
+        
+        // Create a blob URL and trigger download
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        // Try to get filename from Content-Disposition header or use file's display name
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = file.displayName || file.fileName || 'download';
+        
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1].replace(/['"]/g, '');
+          }
+        }
+        
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading file:', err);
+        alert('Failed to download file. Please try again.');
       }
     });
   }
