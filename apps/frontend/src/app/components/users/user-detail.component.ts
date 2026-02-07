@@ -12,67 +12,68 @@ import { User, UserUpdate, ResetPassword } from '../../models/user.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, NgIconComponent],
   template: `
-    <div class="p-6 max-w-4xl mx-auto space-y-6">
+    <div class="p-8 space-y-6 font-body animate-fade-in-up">
+      <!-- Header -->
       <div class="flex items-center gap-4">
-        <a 
+        <a
           routerLink="/home/users"
-          class="p-2 hover:bg-interactive-hover rounded transition-colors">
+          class="p-2.5 hover:bg-interactive-hover rounded-xl transition-colors">
           <ng-icon name="heroArrowLeft" class="w-5 h-5 text-text-muted"></ng-icon>
         </a>
-        <h1 class="text-2xl font-bold text-text-primary">User Details</h1>
+        <h1 class="text-3xl font-display text-text-primary">User Details</h1>
       </div>
 
       @if (loading()) {
-        <div class="text-center py-8 text-text-muted">Loading user...</div>
+        <div class="text-center py-16 text-text-muted">Loading user...</div>
       } @else if (user()) {
-        <div class="bg-bg-secondary border border-border-primary rounded-lg p-6 space-y-6">
+        <div class="bg-bg-secondary border border-border-primary rounded-2xl p-8 space-y-8 animate-fade-in-up" style="animation-delay: 100ms">
           <!-- User Info Section -->
           <div>
-            <h2 class="text-lg font-semibold text-text-primary mb-4 border-b border-border-primary pb-2">
+            <h2 class="font-display text-xl text-text-primary mb-5 border-b border-border-primary pb-3">
               User Information
             </h2>
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label class="block text-sm font-medium text-text-primary mb-2">First Name</label>
-                  <input 
+                  <label class="block text-sm font-medium text-text-secondary mb-2">First Name</label>
+                  <input
                     type="text"
                     formControlName="firstName"
-                    class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+                    class="w-full rounded-xl bg-input border border-input px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-text-primary mb-2">Last Name</label>
-                  <input 
+                  <label class="block text-sm font-medium text-text-secondary mb-2">Last Name</label>
+                  <input
                     type="text"
                     formControlName="lastName"
-                    class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+                    class="w-full rounded-xl bg-input border border-input px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Email</label>
-                <input 
+                <label class="block text-sm font-medium text-text-secondary mb-2">Email</label>
+                <input
                   type="email"
                   formControlName="email"
-                  class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+                  class="w-full rounded-xl bg-input border border-input px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Status</label>
+                <label class="block text-sm font-medium text-text-secondary mb-2">Status</label>
                 <div class="flex items-center gap-4">
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input 
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
                       type="checkbox"
                       formControlName="isActive"
-                      class="rounded border-border-primary">
+                      class="rounded border-border-primary accent-accent">
                     <span class="text-sm text-text-primary">
                       @if (form.get('isActive')?.value) {
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-success/20 text-success">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/15 text-success">
                           <ng-icon name="heroCheckCircle" class="w-3 h-3"></ng-icon>
                           Active
                         </span>
                       } @else {
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-error/20 text-error">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-error/15 text-error">
                           <ng-icon name="heroXCircle" class="w-3 h-3"></ng-icon>
                           Inactive
                         </span>
@@ -83,39 +84,45 @@ import { User, UserUpdate, ResetPassword } from '../../models/user.model';
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">Roles</label>
-                <div class="space-y-2">
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input 
+                <label class="block text-sm font-medium text-text-secondary mb-2">Roles</label>
+                <div class="space-y-3">
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
                       type="checkbox"
                       formControlName="isAdmin"
-                      class="rounded border-border-primary">
-                    <span class="text-sm text-text-primary flex items-center gap-1">
-                      <ng-icon name="heroShieldCheck" class="w-4 h-4"></ng-icon>
-                      Admin
-                    </span>
+                      class="rounded border-border-primary accent-accent">
+                    <div class="flex flex-col">
+                      <span class="text-sm text-text-primary flex items-center gap-1.5 font-medium">
+                        <ng-icon name="heroShieldCheck" class="w-4 h-4 text-accent"></ng-icon>
+                        Admin
+                      </span>
+                      <span class="text-xs text-text-muted">Full access to all system features</span>
+                    </div>
                   </label>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input 
+                  <label class="flex items-center gap-3 cursor-pointer">
+                    <input
                       type="checkbox"
                       formControlName="isUser"
-                      class="rounded border-border-primary">
-                    <span class="text-sm text-text-primary">User</span>
+                      class="rounded border-border-primary accent-accent">
+                    <div class="flex flex-col">
+                      <span class="text-sm text-text-primary font-medium">User</span>
+                      <span class="text-xs text-text-muted">Standard user permissions</span>
+                    </div>
                   </label>
                 </div>
               </div>
 
-              <div class="flex items-center justify-end gap-2 pt-4 border-t border-border-primary">
-                <button 
+              <div class="flex items-center justify-end gap-3 pt-5 border-t border-border-primary">
+                <button
                   type="button"
                   routerLink="/home/users"
-                  class="px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+                  class="px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover transition-colors font-medium">
                   Cancel
                 </button>
-                <button 
+                <button
                   type="submit"
                   [disabled]="form.invalid || saving()"
-                  class="px-4 py-2 bg-info text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+                  class="px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-sm">
                   {{ saving() ? 'Saving...' : 'Save Changes' }}
                 </button>
               </div>
@@ -123,28 +130,28 @@ import { User, UserUpdate, ResetPassword } from '../../models/user.model';
           </div>
 
           <!-- Password Reset Section -->
-          <div class="border-t border-border-primary pt-6">
-            <h2 class="text-lg font-semibold text-text-primary mb-4">Password Reset</h2>
-            <form [formGroup]="passwordForm" (ngSubmit)="onResetPassword()" class="space-y-4">
+          <div class="border-t border-border-primary pt-8">
+            <h2 class="font-display text-xl text-text-primary mb-5 border-b border-border-primary pb-3">Password Reset</h2>
+            <form [formGroup]="passwordForm" (ngSubmit)="onResetPassword()" class="space-y-5">
               <div>
-                <label class="block text-sm font-medium text-text-primary mb-2">New Password</label>
-                <input 
+                <label class="block text-sm font-medium text-text-secondary mb-2">New Password</label>
+                <input
                   type="password"
                   formControlName="newPassword"
-                  class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus"
+                  class="w-full rounded-xl bg-input border border-input px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow"
                   placeholder="Enter new password">
                 @if (passwordForm.get('newPassword')?.hasError('required') && passwordForm.get('newPassword')?.touched) {
-                  <p class="text-xs text-error mt-1">Password is required</p>
+                  <p class="text-xs text-error mt-1.5">Password is required</p>
                 }
                 @if (passwordForm.get('newPassword')?.hasError('minlength') && passwordForm.get('newPassword')?.touched) {
-                  <p class="text-xs text-error mt-1">Password must be at least 6 characters</p>
+                  <p class="text-xs text-error mt-1.5">Password must be at least 6 characters</p>
                 }
               </div>
               <div class="flex items-center justify-end">
-                <button 
+                <button
                   type="submit"
                   [disabled]="passwordForm.invalid || resettingPassword()"
-                  class="px-4 py-2 bg-warning text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+                  class="px-5 py-2.5 bg-warning text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-sm">
                   {{ resettingPassword() ? 'Resetting...' : 'Reset Password' }}
                 </button>
               </div>
@@ -152,41 +159,43 @@ import { User, UserUpdate, ResetPassword } from '../../models/user.model';
           </div>
 
           <!-- User Metadata -->
-          <div class="border-t border-border-primary pt-6">
-            <h2 class="text-lg font-semibold text-text-primary mb-4">Metadata</h2>
-            <div class="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span class="text-text-muted">User ID:</span>
-                <span class="text-text-primary ml-2">{{ user()?.id }}</span>
-              </div>
-              <div>
-                <span class="text-text-muted">Username:</span>
-                <span class="text-text-primary ml-2">{{ user()?.userName }}</span>
-              </div>
-              <div>
-                <span class="text-text-muted">Created:</span>
-                <span class="text-text-primary ml-2">{{ formatDate(user()?.createdAt || '') }}</span>
-              </div>
-              @if (user()?.updatedAt) {
-                <div>
-                  <span class="text-text-muted">Last Updated:</span>
-                  <span class="text-text-primary ml-2">{{ formatDate(user()?.updatedAt || '') }}</span>
+          <div class="border-t border-border-primary pt-8">
+            <h2 class="font-display text-xl text-text-primary mb-5 border-b border-border-primary pb-3">Metadata</h2>
+            <div class="bg-bg-tertiary rounded-xl p-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div class="flex flex-col gap-1">
+                  <span class="text-text-muted text-xs uppercase tracking-wider">User ID</span>
+                  <span class="text-text-primary font-medium">{{ user()?.id }}</span>
                 </div>
-              }
+                <div class="flex flex-col gap-1">
+                  <span class="text-text-muted text-xs uppercase tracking-wider">Username</span>
+                  <span class="text-text-primary font-medium">{{ user()?.userName }}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-text-muted text-xs uppercase tracking-wider">Created</span>
+                  <span class="text-text-primary font-medium">{{ formatDate(user()?.createdAt || '') }}</span>
+                </div>
+                @if (user()?.updatedAt) {
+                  <div class="flex flex-col gap-1">
+                    <span class="text-text-muted text-xs uppercase tracking-wider">Last Updated</span>
+                    <span class="text-text-primary font-medium">{{ formatDate(user()?.updatedAt || '') }}</span>
+                  </div>
+                }
+              </div>
             </div>
           </div>
         </div>
       } @else {
-        <div class="text-center py-8 text-text-muted">User not found</div>
+        <div class="text-center py-16 text-text-muted">User not found</div>
       }
 
       @if (message()) {
-        <div class="p-4 bg-success/20 border border-success rounded-md text-success text-sm">
+        <div class="p-4 bg-success/15 border border-success/30 rounded-xl text-success text-sm font-medium animate-fade-in-up">
           {{ message() }}
         </div>
       }
       @if (error()) {
-        <div class="p-4 bg-error/20 border border-error rounded-md text-error text-sm">
+        <div class="p-4 bg-error/15 border border-error/30 rounded-xl text-error text-sm font-medium animate-fade-in-up">
           {{ error() }}
         </div>
       }

@@ -10,13 +10,13 @@ import { heroXMark } from '@ng-icons/heroicons/outline';
   template: `
     @if (isOpen) {
       <div class="fixed inset-0 z-50 flex items-center justify-center p-6 animate-fade-in" (click)="onBackdropClick()">
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="onBackdropClick()"></div>
-        <div class="relative z-10 w-full max-w-5xl max-h-[92vh] overflow-y-auto bg-bg-secondary border border-border-primary rounded-xl shadow-2xl animate-slide-up" (click)="$event.stopPropagation()">
-          <div class="sticky top-0 z-20 flex items-center justify-between px-6 py-5 border-b border-border-primary bg-bg-secondary/95 backdrop-blur-sm">
-            <h2 class="text-xl font-semibold text-text-primary">{{ title }}</h2>
-            <button 
-              (click)="close()" 
-              class="inline-flex items-center justify-center rounded-lg p-2 hover:bg-interactive-hover active:scale-95 transition-all"
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-md transition-opacity" (click)="onBackdropClick()"></div>
+        <div class="relative z-10 w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-bg-secondary border border-border-primary rounded-2xl shadow-2xl animate-slide-up" (click)="$event.stopPropagation()">
+          <div class="sticky top-0 z-20 flex items-center justify-between px-6 py-5 border-b border-border-primary bg-bg-secondary/95 backdrop-blur-sm rounded-t-2xl">
+            <h2 class="font-display text-xl text-text-primary">{{ title }}</h2>
+            <button
+              (click)="close()"
+              class="inline-flex items-center justify-center rounded-xl p-2 hover:bg-interactive-hover active:scale-95 transition-all"
               aria-label="Close modal">
               <ng-icon name="heroXMark" class="w-5 h-5 text-text-muted"></ng-icon>
             </button>
@@ -25,7 +25,7 @@ import { heroXMark } from '@ng-icons/heroicons/outline';
             <ng-content></ng-content>
           </div>
           @if (showFooter) {
-            <div class="sticky bottom-0 z-20 flex items-center justify-end gap-3 px-6 py-5 border-t border-border-primary bg-bg-secondary/95 backdrop-blur-sm">
+            <div class="sticky bottom-0 z-20 flex items-center justify-end gap-3 px-6 py-5 border-t border-border-primary bg-bg-secondary/95 backdrop-blur-sm rounded-b-2xl">
               <ng-content select="[footer]"></ng-content>
             </div>
           }
@@ -55,11 +55,11 @@ import { heroXMark } from '@ng-icons/heroicons/outline';
     }
 
     .animate-fade-in {
-      animation: fade-in 0.2s ease-out;
+      animation: fade-in 0.25s ease-out;
     }
 
     .animate-slide-up {
-      animation: slide-up 0.3s ease-out;
+      animation: slide-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
   `]
 })

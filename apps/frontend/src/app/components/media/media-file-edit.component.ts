@@ -9,41 +9,41 @@ import { MediaFile } from '../../models/media-library.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
       <div>
-        <label class="block text-sm font-medium text-text-primary mb-1">Display Name</label>
-        <input 
+        <label class="block text-sm font-medium text-text-secondary mb-1.5">Display Name</label>
+        <input
           type="text"
           formControlName="displayName"
-          class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+          class="w-full rounded-xl bg-input border border-input px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-text-primary mb-1">Description</label>
-        <textarea 
+        <label class="block text-sm font-medium text-text-secondary mb-1.5">Description</label>
+        <textarea
           formControlName="description"
           rows="4"
-          class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus"></textarea>
+          class="w-full rounded-xl bg-input border border-input px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow"></textarea>
       </div>
 
-      <div class="text-xs text-text-muted space-y-1">
-        <p><strong>File:</strong> {{ file.fileName }}</p>
-        <p><strong>Size:</strong> {{ formatFileSize(file.fileSize) }}</p>
-        <p><strong>Type:</strong> {{ file.contentType }}</p>
-        <p><strong>Uploaded:</strong> {{ formatDate(file.uploadedAt) }}</p>
+      <div class="bg-bg-tertiary rounded-xl p-4 space-y-1.5">
+        <p class="text-xs text-text-muted"><span class="font-medium text-text-secondary">File:</span> {{ file.fileName }}</p>
+        <p class="text-xs text-text-muted"><span class="font-medium text-text-secondary">Size:</span> {{ formatFileSize(file.fileSize) }}</p>
+        <p class="text-xs text-text-muted"><span class="font-medium text-text-secondary">Type:</span> {{ file.contentType }}</p>
+        <p class="text-xs text-text-muted"><span class="font-medium text-text-secondary">Uploaded:</span> {{ formatDate(file.uploadedAt) }}</p>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-4">
-        <button 
+      <div class="flex items-center justify-end gap-3 pt-4">
+        <button
           type="button"
           (click)="onCancel()"
-          class="px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+          class="px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover transition-colors text-sm text-text-secondary">
           Cancel
         </button>
-        <button 
+        <button
           type="submit"
           [disabled]="saving()"
-          class="px-4 py-2 bg-info text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+          class="px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm shadow-sm">
           {{ saving() ? 'Saving...' : 'Save' }}
         </button>
       </div>

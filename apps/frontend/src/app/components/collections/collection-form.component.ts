@@ -26,24 +26,24 @@ interface ColumnFormData {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, NgIconComponent],
   template: `
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6 font-body">
       <!-- Basic Information Section -->
       <div class="space-y-4">
         <div class="border-b border-border-primary pb-2">
-          <h3 class="text-lg font-semibold text-text-primary">Basic Information</h3>
+          <h3 class="text-lg font-display text-text-primary">Basic Information</h3>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-text-primary mb-2">
               Collection Name
               <span class="text-error">*</span>
             </label>
-            <input 
+            <input
               type="text"
               formControlName="name"
               [readonly]="isEditMode()"
-              class="w-full rounded-md bg-input border border-input px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus disabled:opacity-60 disabled:cursor-not-allowed"
+              class="w-full rounded-lg bg-input border border-input px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
               placeholder="e.g., products">
             @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {
               <p class="text-xs text-error mt-1">Name is required</p>
@@ -61,10 +61,10 @@ interface ColumnFormData {
               Display Name
               <span class="text-error">*</span>
             </label>
-            <input 
+            <input
               type="text"
               formControlName="displayName"
-              class="w-full rounded-md bg-input border border-input px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus"
+              class="w-full rounded-lg bg-input border border-input px-3 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-all duration-200"
               placeholder="e.g., Products">
             @if (form.get('displayName')?.hasError('required') && form.get('displayName')?.touched) {
               <p class="text-xs text-error mt-1">Display name is required</p>
@@ -73,40 +73,40 @@ interface ColumnFormData {
         </div>
       </div>
 
-      <!-- Fields Section (Strapi-style) -->
+      <!-- Fields Section -->
       <div class="space-y-4">
         <div class="flex items-center justify-between border-b border-border-primary pb-2">
-          <h3 class="text-lg font-semibold text-text-primary">Fields</h3>
-          <button 
+          <h3 class="text-lg font-display text-text-primary">Fields</h3>
+          <button
             type="button"
             (click)="addColumn()"
-            class="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-info text-white rounded-md hover:opacity-90 transition-opacity">
+            class="inline-flex items-center gap-2 px-4 py-1.5 text-sm bg-accent text-white rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium shadow-sm">
             <ng-icon name="heroPlus" class="w-4 h-4"></ng-icon>
             Add another field
           </button>
         </div>
 
         @if (columnsArray.length === 0) {
-          <div class="text-center py-8 border border-dashed border-border-primary rounded-lg">
+          <div class="text-center py-10 border border-dashed border-border-primary rounded-xl">
             <p class="text-sm text-text-muted mb-3">No fields yet</p>
-            <button 
+            <button
               type="button"
               (click)="addColumn()"
-              class="text-sm text-info hover:underline">
+              class="text-sm text-accent hover:underline font-medium transition-colors">
               Add your first field
             </button>
           </div>
         } @else {
           <div class="space-y-3">
             @for (columnGroup of columnsArray.controls; track $index; let i = $index) {
-              <div [formGroup]="$any(columnGroup)" class="border border-border-primary rounded-lg bg-bg-secondary">
+              <div [formGroup]="$any(columnGroup)" class="border border-border-primary rounded-xl bg-bg-secondary overflow-hidden">
                 <!-- Field Header -->
-                <div class="flex items-center justify-between p-4 border-b border-border-primary bg-bg-tertiary rounded-t-lg">
+                <div class="flex items-center justify-between p-4 border-b border-border-primary bg-bg-tertiary/50 rounded-t-xl">
                   <div class="flex items-center gap-3">
-                    <button 
+                    <button
                       type="button"
                       (click)="toggleColumnExpanded(i)"
-                      class="p-1 hover:bg-interactive-hover rounded transition-colors">
+                      class="p-1 hover:bg-interactive-hover rounded-lg transition-colors active:scale-95">
                       <ng-icon [name]="isColumnExpanded(i) ? 'heroChevronUp' : 'heroChevronDown'" class="w-4 h-4 text-text-muted"></ng-icon>
                     </button>
                     <div>
@@ -116,15 +116,15 @@ interface ColumnFormData {
                       <div class="text-xs text-text-muted">
                         {{ getBaseTypeDisplayName(columnGroup.get('baseTypeName')?.value) }}
                         @if (columnGroup.get('isExisting')?.value) {
-                          <span class="ml-2 px-1.5 py-0.5 bg-bg-tertiary rounded text-text-muted">Existing</span>
+                          <span class="ml-2 px-1.5 py-0.5 bg-accent-muted rounded-md text-text-secondary text-[10px] font-medium">Existing</span>
                         }
                       </div>
                     </div>
                   </div>
-                  <button 
+                  <button
                     type="button"
                     (click)="removeColumn(i)"
-                    class="p-1.5 hover:bg-interactive-hover rounded transition-colors text-error">
+                    class="p-1.5 hover:bg-interactive-hover rounded-lg transition-colors text-error active:scale-95">
                     <ng-icon name="heroTrash" class="w-4 h-4"></ng-icon>
                   </button>
                 </div>
@@ -139,12 +139,12 @@ interface ColumnFormData {
                           Field Name
                           <span class="text-error">*</span>
                         </label>
-                        <input 
+                        <input
                           type="text"
                           formControlName="name"
                           [readonly]="columnGroup.get('isExisting')?.value"
                           (blur)="onColumnNameBlur($index)"
-                          class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus disabled:opacity-60 disabled:cursor-not-allowed"
+                          class="w-full rounded-lg bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                           placeholder="e.g., title">
                         <p class="text-xs text-text-muted mt-1">Used in API and database (automatically converted to camelCase)</p>
                       </div>
@@ -153,10 +153,10 @@ interface ColumnFormData {
                           Field Type
                           <span class="text-error">*</span>
                         </label>
-                        <select 
+                        <select
                           formControlName="baseTypeName"
                           [disabled]="columnGroup.get('isExisting')?.value && columnGroup.get('autoIncrement')?.value"
-                          class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus disabled:opacity-60 disabled:cursor-not-allowed">
+                          class="w-full rounded-lg bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed">
                           @for (baseType of baseTypes(); track baseType.name) {
                             <option [value]="baseType.name">{{ baseType.displayName || baseType.name }}</option>
                           }
@@ -172,10 +172,10 @@ interface ColumnFormData {
                       <label class="block text-sm font-medium text-text-primary mb-2">
                         Display Name
                       </label>
-                      <input 
+                      <input
                         type="text"
                         formControlName="displayName"
-                        class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus"
+                        class="w-full rounded-lg bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-all duration-200"
                         placeholder="e.g., Title">
                       <p class="text-xs text-text-muted mt-1">Label shown in the admin panel</p>
                     </div>
@@ -184,43 +184,43 @@ interface ColumnFormData {
                     <div class="border-t border-border-primary pt-4">
                       <h4 class="text-sm font-medium text-text-primary mb-3">Field Options</h4>
                       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <label class="flex items-start gap-2 cursor-pointer">
-                          <input 
-                            type="checkbox" 
-                            formControlName="nullable" 
-                            class="mt-1 rounded border-border-primary">
+                        <label class="flex items-start gap-2.5 cursor-pointer p-2 rounded-lg hover:bg-interactive-hover transition-colors">
+                          <input
+                            type="checkbox"
+                            formControlName="nullable"
+                            class="mt-0.5 h-4 w-4 rounded border-border-primary text-accent focus:ring-2 ring-focus transition-colors">
                           <div>
                             <div class="text-sm font-medium text-text-primary">Nullable</div>
                             <div class="text-xs text-text-muted">Allow empty values</div>
                           </div>
                         </label>
-                        <label class="flex items-start gap-2 cursor-pointer">
-                          <input 
-                            type="checkbox" 
-                            formControlName="visible" 
-                            class="mt-1 rounded border-border-primary">
+                        <label class="flex items-start gap-2.5 cursor-pointer p-2 rounded-lg hover:bg-interactive-hover transition-colors">
+                          <input
+                            type="checkbox"
+                            formControlName="visible"
+                            class="mt-0.5 h-4 w-4 rounded border-border-primary text-accent focus:ring-2 ring-focus transition-colors">
                           <div>
                             <div class="text-sm font-medium text-text-primary">Visible</div>
                             <div class="text-xs text-text-muted">Show in admin panel</div>
                           </div>
                         </label>
-                        <label class="flex items-start gap-2" [class.cursor-pointer]="!columnGroup.get('isExisting')?.value" [class.cursor-not-allowed]="columnGroup.get('isExisting')?.value">
-                          <input 
-                            type="checkbox" 
-                            formControlName="unique" 
+                        <label class="flex items-start gap-2.5 p-2 rounded-lg transition-colors" [class.cursor-pointer]="!columnGroup.get('isExisting')?.value" [class.hover:bg-interactive-hover]="!columnGroup.get('isExisting')?.value" [class.cursor-not-allowed]="columnGroup.get('isExisting')?.value" [class.opacity-60]="columnGroup.get('isExisting')?.value">
+                          <input
+                            type="checkbox"
+                            formControlName="unique"
                             [disabled]="columnGroup.get('isExisting')?.value"
-                            class="mt-1 rounded border-border-primary disabled:opacity-60 disabled:cursor-not-allowed">
+                            class="mt-0.5 h-4 w-4 rounded border-border-primary text-accent focus:ring-2 ring-focus transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                           <div>
                             <div class="text-sm font-medium text-text-primary">Unique</div>
                             <div class="text-xs text-text-muted">Enforce uniqueness</div>
                           </div>
                         </label>
-                        <label class="flex items-start gap-2" [class.cursor-pointer]="canAutoIncrement(columnGroup)" [class.cursor-not-allowed]="!canAutoIncrement(columnGroup)">
-                          <input 
-                            type="checkbox" 
-                            formControlName="autoIncrement" 
+                        <label class="flex items-start gap-2.5 p-2 rounded-lg transition-colors" [class.cursor-pointer]="canAutoIncrement(columnGroup)" [class.hover:bg-interactive-hover]="canAutoIncrement(columnGroup)" [class.cursor-not-allowed]="!canAutoIncrement(columnGroup)" [class.opacity-60]="!canAutoIncrement(columnGroup)">
+                          <input
+                            type="checkbox"
+                            formControlName="autoIncrement"
                             [disabled]="!canAutoIncrement(columnGroup)"
-                            class="mt-1 rounded border-border-primary disabled:opacity-60 disabled:cursor-not-allowed">
+                            class="mt-0.5 h-4 w-4 rounded border-border-primary text-accent focus:ring-2 ring-focus transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
                           <div>
                             <div class="text-sm font-medium text-text-primary">Auto Increment</div>
                             <div class="text-xs text-text-muted">
@@ -247,16 +247,16 @@ interface ColumnFormData {
 
       <!-- Actions -->
       <div class="flex items-center justify-end gap-3 pt-4 border-t border-border-primary">
-        <button 
+        <button
           type="button"
           (click)="onCancel()"
-          class="px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors text-text-primary">
+          class="px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover active:scale-95 transition-all text-text-primary font-medium">
           Cancel
         </button>
-        <button 
+        <button
           type="submit"
           [disabled]="form.invalid || saving() || columnsArray.length === 0"
-          class="px-6 py-2 bg-info text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity font-medium">
+          class="px-6 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium shadow-sm">
           {{ saving() ? 'Saving...' : (isEditMode() ? 'Save' : 'Create Collection') }}
         </button>
       </div>

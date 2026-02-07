@@ -1,15 +1,20 @@
-@import "tailwindcss";
+@use "tailwindcss";
 
-/* First, import the CSS variables that define RGB values */
+/* Import the CSS variables that define the design system */
 @import "./variables.css";
 
-/* Ensure full viewport coverage */
+/* =========================================
+   Global Typography
+   ========================================= */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   overflow-x: hidden;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Ensure app-root takes full space */
@@ -19,37 +24,83 @@ app-root {
   min-height: 100vh;
 }
 
-/* Global scrollbar styling */
+/* =========================================
+   Noise Texture Overlay
+   ========================================= */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* =========================================
+   Scrollbar Styling
+   ========================================= */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgb(var(--color-border-primary) / 0.3) transparent;
+  scrollbar-color: rgb(var(--color-border-primary) / 0.12) transparent;
 }
 
 *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-track {
   background: transparent;
-  border-radius: 10px;
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgb(var(--color-border-primary) / 0.3);
-  border-radius: 10px;
+  background: rgb(var(--color-border-primary) / 0.12);
+  border-radius: 99px;
   transition: background 0.2s ease;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--color-border-primary) / 0.5);
+  background: rgb(var(--color-border-primary) / 0.25);
 }
 
 *::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* Define custom utility classes using our CSS variables */
+/* =========================================
+   Global Animation Keyframes
+   ========================================= */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* =========================================
+   Custom Utility Classes
+   ========================================= */
 @utility bg-bg-primary {
   background-color: rgb(var(--color-bg-primary));
 }
@@ -90,6 +141,10 @@ app-root {
   color: rgb(var(--color-info));
 }
 
+@utility text-accent {
+  color: rgb(var(--color-accent));
+}
+
 @utility bg-interactive {
   background-color: rgb(var(--color-interactive-bg) / var(--color-interactive-bg-opacity));
 }
@@ -116,4 +171,105 @@ app-root {
 
 @utility backdrop-blur-theme {
   backdrop-filter: var(--backdrop-blur);
+}
+
+@utility bg-accent {
+  background-color: rgb(var(--color-accent));
+}
+
+@utility bg-accent-muted {
+  background-color: rgb(var(--color-accent-muted) / var(--color-accent-muted-opacity));
+}
+
+@utility bg-sidebar-active {
+  background-color: rgb(var(--sidebar-active-bg) / var(--sidebar-active-opacity));
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility font-body {
+  font-family: var(--font-body);
+}
+
+@utility bg-info {
+  background-color: rgb(var(--color-info));
+}
+
+@utility bg-success {
+  background-color: rgb(var(--color-success));
+}
+
+@utility bg-warning {
+  background-color: rgb(var(--color-warning));
+}
+
+@utility bg-error {
+  background-color: rgb(var(--color-error));
+}
+
+/* Border color utilities for left/top accent borders */
+@utility border-l-accent {
+  border-left-color: rgb(var(--color-accent));
+}
+@utility border-l-success {
+  border-left-color: rgb(var(--color-success));
+}
+@utility border-l-error {
+  border-left-color: rgb(var(--color-error));
+}
+@utility border-l-warning {
+  border-left-color: rgb(var(--color-warning));
+}
+@utility border-l-text-muted {
+  border-left-color: rgb(var(--color-text-muted));
+}
+@utility border-accent {
+  border-color: rgb(var(--color-accent));
+}
+
+/* Animation utilities */
+@utility animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+@utility animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+@utility animate-fade-in-down {
+  animation: fadeInDown 0.3s ease-out both;
+}
+
+@utility animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out both;
+}
+
+@utility animate-scale-in {
+  animation: scaleIn 0.3s ease-out both;
+}
+
+/* Stagger delay utilities */
+@utility stagger-1 { animation-delay: 50ms; }
+@utility stagger-2 { animation-delay: 100ms; }
+@utility stagger-3 { animation-delay: 150ms; }
+@utility stagger-4 { animation-delay: 200ms; }
+@utility stagger-5 { animation-delay: 250ms; }
+@utility stagger-6 { animation-delay: 300ms; }
+
+/* =========================================
+   Global Selection Styling
+   ========================================= */
+::selection {
+  background: rgb(var(--color-accent) / 0.25);
+  color: rgb(var(--color-text-primary));
+}
+
+/* =========================================
+   Focus Visible Styling
+   ========================================= */
+*:focus-visible {
+  outline: 2px solid rgb(var(--color-accent) / 0.5);
+  outline-offset: 2px;
 }

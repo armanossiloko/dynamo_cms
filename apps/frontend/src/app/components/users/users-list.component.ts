@@ -12,48 +12,51 @@ import { ModalComponent } from '../shared/modal.component';
   standalone: true,
   imports: [CommonModule, RouterLink, NgIconComponent, ModalComponent],
   template: `
-    <div class="p-6 space-y-4">
+    <div class="p-8 space-y-6 font-body animate-fade-in-up">
+      <!-- Header -->
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-text-primary">User Management</h1>
-        <a 
+        <h1 class="text-3xl font-display text-text-primary">User Management</h1>
+        <a
           routerLink="/home/register"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-info text-white rounded-md hover:opacity-90 transition-opacity">
+          class="inline-flex items-center gap-2.5 px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium shadow-sm">
           <ng-icon name="heroPlus" class="w-5 h-5"></ng-icon>
           Register New User
         </a>
       </div>
 
       @if (loading()) {
-        <div class="text-center py-8 text-text-muted">Loading users...</div>
+        <div class="text-center py-16 text-text-muted font-body">Loading users...</div>
       } @else if (users().length === 0) {
-        <div class="text-center py-8 text-text-muted">
-          <p class="mb-4">No users found</p>
-          <a 
+        <div class="text-center py-16 text-text-muted animate-fade-in-up" style="animation-delay: 100ms">
+          <p class="mb-5 text-lg">No users found</p>
+          <a
             routerLink="/home/register"
-            class="inline-flex items-center gap-2 px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+            class="inline-flex items-center gap-2.5 px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover transition-colors font-medium">
             <ng-icon name="heroPlus" class="w-5 h-5"></ng-icon>
             Register your first user
           </a>
         </div>
       } @else {
-        <div class="bg-bg-secondary border border-border-primary rounded-lg overflow-hidden">
+        <div class="bg-bg-secondary border border-border-primary rounded-2xl overflow-hidden animate-fade-in-up" style="animation-delay: 100ms">
           <table class="w-full">
-            <thead class="bg-bg-tertiary border-b border-border-primary">
+            <thead class="bg-bg-tertiary/50 border-b border-border-primary">
               <tr>
-                <th class="px-4 py-3 text-left text-sm font-semibold text-text-primary">User</th>
-                <th class="px-4 py-3 text-left text-sm font-semibold text-text-primary">Email</th>
-                <th class="px-4 py-3 text-left text-sm font-semibold text-text-primary">Roles</th>
-                <th class="px-4 py-3 text-left text-sm font-semibold text-text-primary">Status</th>
-                <th class="px-4 py-3 text-left text-sm font-semibold text-text-primary">Created</th>
-                <th class="px-4 py-3 text-right text-sm font-semibold text-text-primary">Actions</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">User</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Email</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Roles</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Status</th>
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">Created</th>
+                <th class="px-5 py-3.5 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-border-primary">
               @for (user of users(); track user.id) {
-                <tr class="border-b border-border-primary hover:bg-interactive-hover transition-colors">
-                  <td class="px-4 py-3">
-                    <div class="flex items-center gap-2">
-                      <ng-icon name="heroUser" class="w-5 h-5 text-text-muted"></ng-icon>
+                <tr class="hover:bg-interactive-hover transition-colors">
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full bg-accent-muted flex items-center justify-center flex-shrink-0">
+                        <ng-icon name="heroUser" class="w-4 h-4 text-accent"></ng-icon>
+                      </div>
                       <div>
                         <div class="text-sm font-medium text-text-primary">
                           {{ getUserDisplayName(user) }}
@@ -62,44 +65,44 @@ import { ModalComponent } from '../shared/modal.component';
                       </div>
                     </div>
                   </td>
-                  <td class="px-4 py-3 text-sm text-text-primary">{{ user.email }}</td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center gap-1 flex-wrap">
+                  <td class="px-5 py-4 text-sm text-text-primary">{{ user.email }}</td>
+                  <td class="px-5 py-4">
+                    <div class="flex items-center gap-1.5 flex-wrap">
                       @for (role of user.roles; track role) {
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-info/20 text-info">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-muted text-accent">
                           <ng-icon name="heroShieldCheck" class="w-3 h-3"></ng-icon>
                           {{ role }}
                         </span>
                       }
                     </div>
                   </td>
-                  <td class="px-4 py-3">
+                  <td class="px-5 py-4">
                     @if (user.isActive) {
-                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-success/20 text-success">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/15 text-success">
                         <ng-icon name="heroCheckCircle" class="w-3 h-3"></ng-icon>
                         Active
                       </span>
                     } @else {
-                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-error/20 text-error">
+                      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-error/15 text-error">
                         <ng-icon name="heroXCircle" class="w-3 h-3"></ng-icon>
                         Inactive
                       </span>
                     }
                   </td>
-                  <td class="px-4 py-3 text-sm text-text-muted">
+                  <td class="px-5 py-4 text-sm text-text-muted">
                     {{ formatDate(user.createdAt) }}
                   </td>
-                  <td class="px-4 py-3">
-                    <div class="flex items-center justify-end gap-2">
-                      <a 
+                  <td class="px-5 py-4">
+                    <div class="flex items-center justify-end gap-1">
+                      <a
                         [routerLink]="['/home/users', user.id]"
-                        class="p-1.5 hover:bg-interactive-hover rounded transition-colors text-text-muted"
+                        class="p-2 hover:bg-interactive-hover rounded-lg transition-colors text-text-muted"
                         title="Edit User">
                         <ng-icon name="heroPencilSquare" class="w-4 h-4"></ng-icon>
                       </a>
-                      <button 
+                      <button
                         (click)="confirmDelete(user)"
-                        class="p-1.5 hover:bg-interactive-hover rounded transition-colors text-error"
+                        class="p-2 hover:bg-interactive-hover rounded-lg transition-colors text-error"
                         title="Delete User">
                         <ng-icon name="heroTrash" class="w-4 h-4"></ng-icon>
                       </button>
@@ -112,25 +115,25 @@ import { ModalComponent } from '../shared/modal.component';
         </div>
       }
 
-      <app-modal 
+      <app-modal
         [title]="deleteModalTitle()"
         [isOpen]="showDeleteModal()"
         (closed)="closeDeleteModal()">
-        <div class="space-y-4">
-          <p class="text-text-primary">
-            Are you sure you want to delete user <strong>{{ selectedUser()?.email }}</strong>? 
+        <div class="space-y-5">
+          <p class="text-text-primary leading-relaxed">
+            Are you sure you want to delete user <strong class="font-semibold">{{ selectedUser()?.email }}</strong>?
             This action cannot be undone.
           </p>
-          <div class="flex items-center justify-end gap-2">
-            <button 
+          <div class="flex items-center justify-end gap-3">
+            <button
               (click)="closeDeleteModal()"
-              class="px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+              class="px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover transition-colors font-medium">
               Cancel
             </button>
-            <button 
+            <button
               (click)="deleteUser()"
               [disabled]="deleting()"
-              class="px-4 py-2 bg-error text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+              class="px-5 py-2.5 bg-error text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium">
               {{ deleting() ? 'Deleting...' : 'Delete' }}
             </button>
           </div>

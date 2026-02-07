@@ -7,6 +7,7 @@ import { NgIconComponent } from '@ng-icons/core';
 import { heroPlus, heroPencilSquare, heroTrash, heroMagnifyingGlass, heroDocumentText, heroPaperClip } from '@ng-icons/heroicons/outline';
 import { DataService } from '../../services/data.service';
 import { CollectionsService } from '../../services/collections.service';
+import { GraphQLService } from '../../services/graphql.service';
 import { DataCollection } from '../../models/collections.model';
 import { DataResponse } from '../../models/data.model';
 import { ModalComponent } from '../shared/modal.component';
@@ -17,34 +18,65 @@ import { DataFormComponent } from './data-form.component';
   standalone: true,
   imports: [CommonModule, FormsModule, NgIconComponent, ModalComponent, DataFormComponent],
   template: `
-    <div class="p-6 space-y-4">
-      <div class="flex items-center justify-between">
+    <div class="p-6 space-y-5 font-body">
+      <!-- Header -->
+      <div class="flex items-center justify-between animate-fade-in-up stagger-1">
         <div>
-          <h1 class="text-2xl font-bold text-text-primary">{{ collection()?.displayName || collectionName() }}</h1>
-          <p class="text-sm text-text-muted">{{ collectionName() }}</p>
+          <h1 class="font-display text-3xl text-text-primary">{{ collection()?.displayName || collectionName() }}</h1>
+          <p class="text-sm text-text-muted mt-1">{{ collectionName() }}</p>
         </div>
-        <button 
-          (click)="openCreateModal()"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-info text-white rounded-md hover:opacity-90 transition-opacity">
-          <ng-icon name="heroPlus" class="w-5 h-5"></ng-icon>
-          Add Entry
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="toggleGraphQLPanel()"
+            class="inline-flex items-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover active:scale-95 transition-all text-sm text-text-secondary"
+            [class.bg-accent-muted]="showGraphQLPanel()"
+            [class.text-accent]="showGraphQLPanel()"
+            title="View GraphQL Query">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+            GraphQL
+          </button>
+          <button
+            (click)="openCreateModal()"
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <ng-icon name="heroPlus" class="w-5 h-5"></ng-icon>
+            Add Entry
+          </button>
+        </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <!-- GraphQL Query Panel -->
+      @if (showGraphQLPanel()) {
+        <div class="bg-bg-secondary rounded-xl border border-border-primary overflow-hidden animate-fade-in">
+          <div class="flex items-center justify-between px-5 py-3 border-b border-border-primary bg-bg-tertiary/30">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+              <span class="text-xs font-semibold text-text-muted uppercase tracking-wider">GraphQL Query</span>
+            </div>
+            <button
+              (click)="copyGraphQLQuery()"
+              class="text-xs text-text-muted hover:text-text-primary transition-colors px-2.5 py-1 rounded-lg hover:bg-interactive-hover">
+              {{ graphqlCopied() ? 'Copied!' : 'Copy' }}
+            </button>
+          </div>
+          <pre class="p-5 text-xs font-mono text-text-primary overflow-x-auto max-h-[280px] overflow-y-auto">{{ generatedQuery() }}</pre>
+        </div>
+      }
+
+      <!-- Search & Filters -->
+      <div class="flex items-center gap-3 animate-fade-in-up stagger-2">
         <div class="relative flex-1 max-w-md">
-          <ng-icon name="heroMagnifyingGlass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted"></ng-icon>
-          <input 
+          <ng-icon name="heroMagnifyingGlass" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted"></ng-icon>
+          <input
             type="text"
             [(ngModel)]="searchTerm"
             (input)="onSearch()"
             placeholder="Search..."
-            class="w-full pl-10 pr-4 py-2 rounded-md bg-input border border-input text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-focus">
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-input border border-input text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 ring-focus transition-shadow">
         </div>
-        <select 
+        <select
           [(ngModel)]="pageSize"
           (change)="loadData()"
-          class="px-3 py-2 rounded-md bg-input border border-input text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+          class="px-3.5 py-2.5 rounded-xl bg-input border border-input text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
           <option [value]="10">10 per page</option>
           <option [value]="25">25 per page</option>
           <option [value]="50">50 per page</option>
@@ -52,42 +84,46 @@ import { DataFormComponent } from './data-form.component';
         </select>
       </div>
 
+      <!-- Loading State -->
       @if (loading()) {
-        <div class="text-center py-8 text-text-muted">Loading data...</div>
+        <div class="text-center py-12 text-text-muted animate-fade-in-up">Loading data...</div>
       } @else if (dataResponse() && dataResponse()!.data.length === 0) {
-        <div class="text-center py-8 text-text-muted">
-          <p class="mb-4">No data found</p>
-          <button 
+        <!-- Empty State -->
+        <div class="text-center py-16 animate-fade-in-up stagger-3">
+          <h2 class="font-display text-2xl text-text-secondary mb-2">No data found</h2>
+          <p class="text-sm text-text-muted mb-6">Get started by adding your first entry.</p>
+          <button
             (click)="openCreateModal()"
-            class="inline-flex items-center gap-2 px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+            class="inline-flex items-center gap-2 px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover active:scale-95 transition-all text-text-secondary">
             <ng-icon name="heroPlus" class="w-5 h-5"></ng-icon>
             Add your first entry
           </button>
         </div>
       } @else if (dataResponse()) {
-        <div class="bg-bg-secondary border border-border-primary rounded-lg overflow-hidden">
+        <!-- Table -->
+        <div class="bg-bg-secondary rounded-2xl border border-border-primary overflow-hidden animate-fade-in-up stagger-3">
           <table class="w-full">
-            <thead class="bg-bg-tertiary">
+            <thead class="bg-bg-tertiary/50">
               <tr>
                 @for (column of visibleColumns(); track column.name) {
-                  <th class="px-4 py-3 text-left text-sm font-semibold text-text-primary border-b border-border-primary">
+                  <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border-primary">
                     {{ column.displayName || column.name }}
                   </th>
                 }
-                <th class="px-4 py-3 text-left text-sm font-semibold text-text-primary border-b border-border-primary">Actions</th>
+                <th class="px-5 py-3 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider border-b border-border-primary">Actions</th>
               </tr>
             </thead>
             <tbody>
               @for (row of dataResponse()!.data; track getRowId(row)) {
-                <tr class="border-b border-border-primary hover:bg-interactive-hover transition-colors">
+                <tr class="border-b border-border-primary last:border-0 hover:bg-interactive-hover transition-colors">
                   @for (column of visibleColumns(); track column.name) {
-                    <td class="px-4 py-3 text-sm text-text-primary">
+                    <td class="px-5 py-3.5 text-sm text-text-primary">
                       @if (isFileType(column.baseType) && getFileInfo(row[column.name], column.baseType)) {
                         <div class="flex flex-wrap gap-1.5">
                           @for (file of getFileInfo(row[column.name], column.baseType); track file.id) {
                             <button
                               (click)="downloadFile(file)"
-                              class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-info/10 hover:bg-info/20 text-info rounded-lg text-xs border border-info/20 hover:border-info/40 transition-all cursor-pointer group"
+                              class="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-accent-muted text-accent rounded-lg text-xs transition-all cursor-pointer group hover:opacity-80 active:scale-95"
                               [title]="'Click to download: ' + (file.displayName || file.fileName)">
                               <span class="text-sm">{{ getFileIcon(file.displayName || file.fileName || '') }}</span>
                               <span class="max-w-[120px] truncate font-medium">
@@ -104,16 +140,16 @@ import { DataFormComponent } from './data-form.component';
                       }
                     </td>
                   }
-                  <td class="px-4 py-3">
-                    <div class="flex items-center gap-2">
-                      <button 
+                  <td class="px-5 py-3.5">
+                    <div class="flex items-center gap-1">
+                      <button
                         (click)="openEditModal(row)"
-                        class="p-1 hover:bg-interactive rounded transition-colors">
+                        class="p-1.5 rounded-lg hover:bg-interactive-hover active:scale-95 transition-all">
                         <ng-icon name="heroPencilSquare" class="w-4 h-4 text-text-muted"></ng-icon>
                       </button>
-                      <button 
+                      <button
                         (click)="deleteEntry(row)"
-                        class="p-1 hover:bg-interactive rounded transition-colors text-error">
+                        class="p-1.5 rounded-lg hover:bg-interactive-hover active:scale-95 transition-all text-error">
                         <ng-icon name="heroTrash" class="w-4 h-4"></ng-icon>
                       </button>
                     </div>
@@ -124,25 +160,26 @@ import { DataFormComponent } from './data-form.component';
           </table>
         </div>
 
+        <!-- Pagination -->
         @if (dataResponse()!.totalPages > 1) {
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between animate-fade-in-up stagger-4">
             <p class="text-sm text-text-muted">
               Showing {{ (currentPage() - 1) * pageSize + 1 }} to {{ Math.min(currentPage() * pageSize, dataResponse()!.totalCount) }} of {{ dataResponse()!.totalCount }} entries
             </p>
             <div class="flex items-center gap-2">
-              <button 
+              <button
                 (click)="goToPage(currentPage() - 1)"
                 [disabled]="currentPage() === 1"
-                class="px-3 py-1 border border-border-primary rounded-md hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                class="px-4 py-1.5 border border-border-primary rounded-xl hover:bg-interactive-hover active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm text-text-secondary">
                 Previous
               </button>
-              <span class="text-sm text-text-primary">
+              <span class="text-sm text-text-primary px-2">
                 Page {{ currentPage() }} of {{ dataResponse()!.totalPages }}
               </span>
-              <button 
+              <button
                 (click)="goToPage(currentPage() + 1)"
                 [disabled]="currentPage() === dataResponse()!.totalPages"
-                class="px-3 py-1 border border-border-primary rounded-md hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                class="px-4 py-1.5 border border-border-primary rounded-xl hover:bg-interactive-hover active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm text-text-secondary">
                 Next
               </button>
             </div>
@@ -150,11 +187,11 @@ import { DataFormComponent } from './data-form.component';
         }
       }
 
-      <app-modal 
+      <app-modal
         [title]="modalTitle()"
         [isOpen]="showModal()"
         (closed)="closeModal()">
-        <app-data-form 
+        <app-data-form
           [collection]="collection()!"
           [data]="selectedData()"
           (saved)="onDataSaved()"
@@ -169,6 +206,7 @@ export class DataListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dataService = inject(DataService);
   private readonly collectionsService = inject(CollectionsService);
+  private readonly graphqlService = inject(GraphQLService);
   private readonly http = inject(HttpClient);
 
   collectionName = signal<string>('');
@@ -178,6 +216,8 @@ export class DataListComponent implements OnInit {
   showModal = signal<boolean>(false);
   modalTitle = signal<string>('Add Entry');
   selectedData = signal<Record<string, any> | null>(null);
+  showGraphQLPanel = signal(false);
+  graphqlCopied = signal(false);
   searchTerm = '';
   pageSize = 50;
   currentPage = signal<number>(1);
@@ -186,12 +226,28 @@ export class DataListComponent implements OnInit {
   visibleColumns = computed(() => {
     const cols = this.collection()?.columns.filter(c => c.visible) || [];
     return cols.sort((a, b) => {
-      // Put auto-increment/unique columns first (likely IDs)
       if (a.autoIncrement && !b.autoIncrement) return -1;
       if (!a.autoIncrement && b.autoIncrement) return 1;
       return 0;
     });
   });
+
+  generatedQuery = computed(() => {
+    const name = this.collectionName();
+    const cols = this.visibleColumns();
+    if (!name || cols.length === 0) return '';
+    return this.graphqlService.generateCollectionQuery(name, cols);
+  });
+
+  toggleGraphQLPanel(): void {
+    this.showGraphQLPanel.update(v => !v);
+  }
+
+  copyGraphQLQuery(): void {
+    navigator.clipboard.writeText(this.generatedQuery());
+    this.graphqlCopied.set(true);
+    setTimeout(() => this.graphqlCopied.set(false), 2000);
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {

@@ -494,6 +494,26 @@ public class PostgreSQLGenerator
                         throw new InvalidOperationException($"Could not deserialize file data to a proper {(column.BaseTypeName == "file" ? "UploadedFile" : "List<UploadedFile>")} object.");
                     }
                 }
+                // Handle Rich Text type (stored as jsonb)
+                else if (value is JsonElement richTextElement && column.BaseTypeName == "richtext")
+                {
+                    try
+                    {
+                        // Validate that it's a valid JSON structure
+                        if (richTextElement.ValueKind != JsonValueKind.Object && richTextElement.ValueKind != JsonValueKind.Null)
+                        {
+                            throw new InvalidOperationException("Rich text data must be a valid JSON object.");
+                        }
+
+                        var dbDataType = baseTypes.First(d => d.Name == column.BaseTypeName).DbDataType;
+                        queryBuilder.Append($"::{dbDataType}");
+                        finalParams[columnName] = JsonSerializer.Serialize(value);
+                    }
+                    catch (JsonException)
+                    {
+                        throw new InvalidOperationException("Could not serialize rich text data to JSON.");
+                    }
+                }
 
                 if (j < columnsToInsert.Count - 1)
                 {

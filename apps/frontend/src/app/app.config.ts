@@ -29,7 +29,13 @@ import {
       heroArrowsPointingOut,
       heroCog6Tooth,
       heroCodeBracket,
-      heroChevronRight
+      heroChevronRight,
+      heroCommandLine,
+      heroBookOpen,
+      heroBell,
+      heroClock,
+      heroPuzzlePiece,
+      heroPaperClip
 } from '@ng-icons/heroicons/outline';
 
 import { routes } from './app.routes';
@@ -66,7 +72,13 @@ export const appConfig: ApplicationConfig = {
       heroArrowsPointingOut,
       heroCog6Tooth,
       heroCodeBracket,
-      heroChevronRight
+      heroChevronRight,
+      heroCommandLine,
+      heroBookOpen,
+      heroBell,
+      heroClock,
+      heroPuzzlePiece,
+      heroPaperClip
     })
   ]
 };

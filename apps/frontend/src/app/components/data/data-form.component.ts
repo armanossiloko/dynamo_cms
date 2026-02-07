@@ -5,23 +5,24 @@ import { DataService } from '../../services/data.service';
 import { MediaLibraryService } from '../../services/media-library.service';
 import { DataCollection } from '../../models/collections.model';
 import { FileUploadComponent } from '../shared/file-upload.component';
+import { RichTextEditorComponent } from '../shared/rich-text-editor.component';
 import { MediaFile } from '../../models/media-library.model';
 
 @Component({
   selector: 'app-data-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FileUploadComponent],
+  imports: [CommonModule, ReactiveFormsModule, FileUploadComponent, RichTextEditorComponent],
   template: `
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5 font-body">
       @for (column of editableColumns(); track column.name) {
         <div>
-          <label class="block text-sm font-medium text-text-primary mb-1">
+          <label class="block text-sm font-medium text-text-secondary mb-1.5">
             {{ column.displayName || column.name }}
             @if (!column.nullable) {
-              <span class="text-error">*</span>
+              <span class="text-accent">*</span>
             }
           </label>
-          
+
           @if (column.baseType === 'file') {
             <app-file-upload
               [label]="getFileUploadLabel(column)"
@@ -47,59 +48,65 @@ import { MediaFile } from '../../models/media-library.model';
               </div>
             }
           } @else if (column.baseType === 'boolean') {
-            <label class="flex items-center gap-2">
-              <input 
+            <label class="flex items-center gap-2.5 cursor-pointer">
+              <input
                 type="checkbox"
                 [formControlName]="column.name"
-                class="rounded">
+                class="rounded accent-accent w-4 h-4">
               <span class="text-sm text-text-muted">{{ column.nullable ? '(Optional)' : '' }}</span>
             </label>
           } @else if (column.baseType === 'datetime' || column.baseType === 'date') {
-            <input 
+            <input
               [type]="column.baseType === 'date' ? 'date' : 'datetime-local'"
               [formControlName]="column.name"
               [required]="!column.nullable"
-              class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+              class="w-full rounded-xl bg-input border border-input px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
           } @else if (column.baseType === 'time') {
-            <input 
+            <input
               type="time"
               [formControlName]="column.name"
               [required]="!column.nullable"
-              class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+              class="w-full rounded-xl bg-input border border-input px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
           } @else if (column.baseType === 'integer' || column.baseType === 'decimal' || column.baseType === 'bigint') {
-            <input 
+            <input
               type="number"
               [formControlName]="column.name"
               [required]="!column.nullable"
               [step]="column.baseType === 'decimal' ? '0.01' : '1'"
-              class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+              class="w-full rounded-xl bg-input border border-input px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
           } @else if (column.baseType === 'text') {
-            <textarea 
+            <textarea
               [formControlName]="column.name"
               [required]="!column.nullable"
               rows="4"
-              class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus"></textarea>
+              class="w-full rounded-xl bg-input border border-input px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow"></textarea>
+          } @else if (column.baseType === 'richtext') {
+            <app-rich-text-editor
+              [content]="getRichTextContent(column.name)"
+              [placeholder]="column.displayName || column.name"
+              (contentChange)="onRichTextChange($event, column.name)">
+            </app-rich-text-editor>
           } @else {
-            <input 
+            <input
               type="text"
               [formControlName]="column.name"
               [required]="!column.nullable"
-              class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+              class="w-full rounded-xl bg-input border border-input px-3.5 py-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 ring-focus transition-shadow">
           }
         </div>
       }
 
-      <div class="flex items-center justify-end gap-2 pt-4">
-        <button 
+      <div class="flex items-center justify-end gap-3 pt-5">
+        <button
           type="button"
           (click)="onCancel()"
-          class="px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+          class="px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover active:scale-95 transition-all text-text-secondary">
           Cancel
         </button>
-        <button 
+        <button
           type="submit"
           [disabled]="form.invalid || saving()"
-          class="px-4 py-2 bg-info text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+          class="px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm">
           {{ saving() ? 'Saving...' : 'Save' }}
         </button>
       </div>
@@ -120,6 +127,7 @@ export class DataFormComponent implements OnInit {
   saving = signal<boolean>(false);
   fileUploads = signal<Record<string, File[]>>({});
   existingFiles = signal<Record<string, MediaFile | MediaFile[]>>({});
+  richTextContent = signal<Record<string, any>>({});
 
   getFileUploadLabel(column: any) {
     return signal<string>(column.displayName || column.name);
@@ -184,6 +192,17 @@ export class DataFormComponent implements OnInit {
         value = null; // Files are handled separately
       }
       
+      // Handle rich text
+      if (column.baseType === 'richtext') {
+        if (value) {
+          this.richTextContent.update(content => ({
+            ...content,
+            [column.name]: value
+          }));
+        }
+        value = null; // Rich text is handled separately
+      }
+      
       // Handle boolean
       if (column.baseType === 'boolean') {
         value = value ?? false;
@@ -217,6 +236,19 @@ export class DataFormComponent implements OnInit {
       ...uploads,
       [columnName]: files
     }));
+  }
+
+  getRichTextContent(columnName: string): any {
+    return this.richTextContent()[columnName] || null;
+  }
+
+  onRichTextChange(content: any, columnName: string): void {
+    this.richTextContent.update(richText => ({
+      ...richText,
+      [columnName]: content
+    }));
+    // Also update the form control
+    this.form.get(columnName)?.setValue(content);
   }
 
   async onSubmit(): Promise<void> {

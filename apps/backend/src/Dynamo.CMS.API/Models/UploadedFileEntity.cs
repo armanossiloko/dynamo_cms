@@ -63,5 +63,31 @@ public class UploadedFileEntity : IEntity<long>
     public long? UploadedBy { get; set; }
 
     public virtual User? Uploader { get; set; }
+
+    [Column("folder_id")]
+    public int? FolderId { get; set; }
+
+    public virtual MediaFolder? Folder { get; set; }
+
+    [Column("metadata")]
+    public Dictionary<string, object>? Metadata { get; set; }
+
+    [Column("transformations")]
+    public Dictionary<string, object>? Transformations { get; set; }
+
+    [Column("focal_point_x")]
+    public decimal? FocalPointX { get; set; }
+
+    [Column("focal_point_y")]
+    public decimal? FocalPointY { get; set; }
+
+    [Column("tags")]
+    public List<string>? Tags { get; set; }
+
+    [Column("alt_text")]
+    [MaxLength(500)]
+    public string? AltText { get; set; }
+
+    public virtual ICollection<MediaTransformation> CachedTransformations { get; set; } = [];
 }
 

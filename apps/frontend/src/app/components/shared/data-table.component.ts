@@ -40,7 +40,7 @@ import { RouterLink } from '@angular/router';
                 @for (column of columns(); track column.key) {
                   <td class="px-4 py-2 text-sm text-text-primary">
                     @if (column.type === 'link' && column.linkFn) {
-                      <a [routerLink]="column.linkFn(row)" class="text-info hover:underline">
+                      <a [routerLink]="column.linkFn(row)" class="text-accent hover:underline">
                         {{ formatValue(row[column.key], column.type) }}
                       </a>
                     } @else {

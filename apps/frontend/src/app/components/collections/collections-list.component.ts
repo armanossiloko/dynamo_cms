@@ -13,49 +13,55 @@ import { CollectionFormComponent } from './collection-form.component';
   standalone: true,
   imports: [CommonModule, RouterLink, NgIconComponent, ModalComponent, CollectionFormComponent],
   template: `
-    <div class="p-6 space-y-4">
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-text-primary">Collections</h1>
-        <button 
+    <div class="p-6 space-y-6 font-body">
+      <div class="flex items-center justify-between animate-fade-in-up stagger-1">
+        <h1 class="text-3xl font-display text-text-primary">Collections</h1>
+        <button
           (click)="openCreateModal()"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-info text-white rounded-md hover:opacity-90 transition-opacity">
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium shadow-sm">
           <ng-icon name="heroPlus" class="w-5 h-5"></ng-icon>
           Create Collection
         </button>
       </div>
 
       @if (loading()) {
-        <div class="text-center py-8 text-text-muted">Loading collections...</div>
+        <div class="text-center py-16 text-text-muted animate-fade-in-up stagger-2">
+          <p class="font-body text-sm">Loading collections...</p>
+        </div>
       } @else if (collections().length === 0) {
-        <div class="text-center py-8 text-text-muted">
-          <p class="mb-4">No collections found</p>
-          <button 
+        <div class="text-center py-16 animate-fade-in-up stagger-2">
+          <p class="font-display text-2xl text-text-secondary mb-2">No collections yet</p>
+          <p class="text-sm text-text-muted mb-6">Create your first collection to get started.</p>
+          <button
             (click)="openCreateModal()"
-            class="inline-flex items-center gap-2 px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+            class="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 active:scale-95 transition-all font-medium shadow-sm">
             <ng-icon name="heroPlus" class="w-5 h-5"></ng-icon>
             Create your first collection
           </button>
         </div>
       } @else {
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          @for (collection of collections(); track collection.name) {
-            <div class="bg-bg-secondary border border-border-primary rounded-lg p-4 hover:border-info transition-colors">
-              <div class="flex items-start justify-between mb-2">
-                <div class="flex items-center gap-2">
-                  <ng-icon name="heroTableCells" class="w-5 h-5 text-text-muted"></ng-icon>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          @for (collection of collections(); track collection.name; let i = $index) {
+            <div
+              class="bg-bg-secondary rounded-2xl border border-border-primary p-5 hover:border-accent/30 transition-all duration-200 animate-fade-in-up"
+              [ngClass]="'stagger-' + ((i % 6) + 1)"
+              style="border-left: 4px solid rgb(var(--color-accent));">
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex items-center gap-2.5">
+                  <ng-icon name="heroTableCells" class="w-5 h-5 text-accent"></ng-icon>
                   <h3 class="text-lg font-semibold text-text-primary">{{ collection.displayName }}</h3>
                 </div>
-                <button 
+                <button
                   (click)="openEditModal(collection)"
-                  class="p-1 hover:bg-interactive-hover rounded transition-colors">
+                  class="p-1.5 hover:bg-interactive-hover rounded-lg transition-colors active:scale-95">
                   <ng-icon name="heroPencilSquare" class="w-4 h-4 text-text-muted"></ng-icon>
                 </button>
               </div>
-              <p class="text-sm text-text-muted mb-2">{{ collection.name }}</p>
+              <p class="text-sm text-text-secondary mb-1">{{ collection.name }}</p>
               <p class="text-xs text-text-muted mb-4">{{ collection.columns.length }} column(s)</p>
-              <a 
+              <a
                 [routerLink]="['/home/data', collection.name]"
-                class="text-sm text-info hover:underline">
+                class="text-sm text-accent hover:underline font-medium transition-colors">
                 View Data →
               </a>
             </div>
@@ -63,11 +69,11 @@ import { CollectionFormComponent } from './collection-form.component';
         </div>
       }
 
-      <app-modal 
+      <app-modal
         [title]="modalTitle()"
         [isOpen]="showModal()"
         (closed)="closeModal()">
-        <app-collection-form 
+        <app-collection-form
           [collection]="selectedCollection()"
           (saved)="onCollectionSaved()"
           (cancelled)="closeModal()">

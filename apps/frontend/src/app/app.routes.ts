@@ -9,6 +9,14 @@ import { SwaggerViewerComponent } from './components/swagger/swagger-viewer.comp
 import { RegisterComponent } from './components/register.component';
 import { UsersListComponent } from './components/users/users-list.component';
 import { UserDetailComponent } from './components/users/user-detail.component';
+import { WebhooksAdminComponent } from './components/webhooks/webhooks-admin.component';
+import { VersionsAdminComponent } from './components/versions/versions-admin.component';
+import { DynamicZoneComponent } from './components/dynamic-zone/dynamic-zone.component';
+import { GraphQLPlaygroundComponent } from './components/graphql/graphql-playground.component';
+import { GraphQLVoyagerComponent } from './components/graphql/graphql-voyager.component';
+import { SingleTypesListComponent } from './components/single-types/single-types-list.component';
+import { SingleTypeBuilderComponent } from './components/single-types/single-type-builder.component';
+import { SingleTypeEditorComponent } from './components/single-types/single-type-editor.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,11 +29,21 @@ export const routes: Routes = [
       { path: '', redirectTo: 'collections', pathMatch: 'full' },
       { path: 'collections', component: CollectionsListComponent },
       { path: 'data/:collectionName', component: DataListComponent },
+      { path: 'single-types', component: SingleTypesListComponent },
+      { path: 'single-types/builder', component: SingleTypeBuilderComponent },
+      { path: 'single-types/builder/:id', component: SingleTypeBuilderComponent },
+      { path: 'single-types/:apiId/content', component: SingleTypeEditorComponent },
       { path: 'media', component: MediaLibraryComponent },
-      { path: 'swagger', component: SwaggerViewerComponent },
+      { path: 'api-docs', component: SwaggerViewerComponent },
+      { path: 'graphql', component: GraphQLPlaygroundComponent },
+      { path: 'voyager', component: GraphQLVoyagerComponent },
       { path: 'users', component: UsersListComponent },
       { path: 'users/:id', component: UserDetailComponent },
-      { path: 'register', component: RegisterComponent }
+      { path: 'register', component: RegisterComponent },
+      { path: 'webhooks', component: WebhooksAdminComponent },
+      { path: 'versions', component: VersionsAdminComponent },
+      { path: 'components', component: DynamicZoneComponent },
+      { path: 'swagger', redirectTo: 'api-docs', pathMatch: 'full' }
     ]
   },
   { path: '**', redirectTo: 'login' }

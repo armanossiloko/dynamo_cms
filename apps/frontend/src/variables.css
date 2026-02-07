@@ -1,96 +1,119 @@
 /* ===========================================
-   CSS Variables for Theming
+   Warm Obsidian Design System
+   Refined editorial CMS with steel-blue accents
    =========================================== */
 
 :root {
-  /* Primary Background Colors */
-  --color-bg-primary: 2 6 23; /* slate-950 */
-  --color-bg-secondary: 15 23 42; /* slate-900 */
-  --color-bg-tertiary: 30 41 59; /* slate-800 */
-  
-  /* Text Colors */
-  --color-text-primary: 241 245 249; /* slate-100 */
-  --color-text-secondary: 203 213 225; /* slate-300 */
-  --color-text-muted: 148 163 184; /* slate-400 */
-  
-  /* Border Colors */
-  --color-border-primary: 255 255 255; /* white with opacity */
-  --color-border-opacity: 0.1;
-  --color-border-hover: 255 255 255;
+  /* Primary Background Colors — warm charcoal */
+  --color-bg-primary: 12 12 16;       /* #0C0C10 */
+  --color-bg-secondary: 20 20 26;     /* #14141A */
+  --color-bg-tertiary: 30 30 38;      /* #1E1E26 */
+
+  /* Text Colors — warm off-white */
+  --color-text-primary: 237 235 230;   /* #EDEBE6 */
+  --color-text-secondary: 168 164 160; /* #A8A4A0 */
+  --color-text-muted: 107 102 98;      /* #6B6662 */
+
+  /* Border Colors — warm low opacity */
+  --color-border-primary: 237 235 230;
+  --color-border-opacity: 0.08;
+  --color-border-hover: 237 235 230;
   --color-border-hover-opacity: 0.15;
-  
+
   /* Interactive Elements */
-  --color-interactive-bg: 255 255 255;
-  --color-interactive-bg-opacity: 0.1;
-  --color-interactive-hover: 255 255 255;
-  --color-interactive-hover-opacity: 0.15;
-  
-  /* Focus/Ring Colors */
-  --color-ring: 255 255 255;
-  --color-ring-opacity: 0.3;
-  
+  --color-interactive-bg: 237 235 230;
+  --color-interactive-bg-opacity: 0.06;
+  --color-interactive-hover: 237 235 230;
+  --color-interactive-hover-opacity: 0.1;
+
+  /* Focus/Ring Colors — steel blue accent */
+  --color-ring: 110 148 190;          /* steel blue */
+  --color-ring-opacity: 0.4;
+
   /* Input Fields */
-  --color-input-bg: 30 41 59; /* slate-800 */
-  --color-input-bg-opacity: 0.6;
-  --color-input-border: 255 255 255;
-  --color-input-border-opacity: 0.15;
-  --color-input-placeholder: 148 163 184; /* slate-400 */
-  
-  /* Error/Success Colors */
-  --color-error: 248 113 113; /* red-400 */
-  --color-success: 74 222 128; /* green-400 */
-  --color-warning: 251 191 36; /* amber-400 */
-  --color-info: 96 165 250; /* blue-400 */
-  
+  --color-input-bg: 20 20 26;
+  --color-input-bg-opacity: 0.8;
+  --color-input-border: 237 235 230;
+  --color-input-border-opacity: 0.1;
+  --color-input-placeholder: 107 102 98;
+
+  /* Semantic Colors */
+  --color-error: 207 110 110;         /* muted rose */
+  --color-success: 107 175 141;       /* sage green */
+  --color-warning: 212 167 78;        /* warm gold */
+  --color-info: 110 148 190;          /* steel blue — matches accent */
+
+  /* Accent — warm steel blue */
+  --color-accent: 110 148 190;        /* #6E94BE */
+  --color-accent-hover: 130 168 210;  /* #82A8D2 */
+  --color-accent-muted: 110 148 190;
+  --color-accent-muted-opacity: 0.15;
+
   /* Backdrop */
-  --backdrop-blur: blur(8px);
-  --backdrop-opacity: 0.8;
+  --backdrop-blur: blur(16px);
+  --backdrop-opacity: 0.85;
+
+  /* Sidebar active indicator */
+  --sidebar-active-bg: 110 148 190;
+  --sidebar-active-opacity: 0.1;
+
+  /* Typography */
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 /* Light Theme */
 [data-theme="light"] {
-  /* Primary Background Colors */
-  --color-bg-primary: 248 250 252; /* slate-50 */
-  --color-bg-secondary: 241 245 249; /* slate-100 */
-  --color-bg-tertiary: 226 232 240; /* slate-200 */
-  
-  /* Text Colors */
-  --color-text-primary: 15 23 42; /* slate-900 */
-  --color-text-secondary: 51 65 85; /* slate-700 */
-  --color-text-muted: 100 116 139; /* slate-500 */
-  
+  /* Primary Background Colors — warm cream/linen */
+  --color-bg-primary: 250 248 243;    /* #FAF8F3 */
+  --color-bg-secondary: 243 239 234;  /* #F3EFEA */
+  --color-bg-tertiary: 232 227 219;   /* #E8E3DB */
+
+  /* Text Colors — warm near-black */
+  --color-text-primary: 26 24 21;     /* #1A1815 */
+  --color-text-secondary: 89 85 80;   /* #595550 */
+  --color-text-muted: 138 133 128;    /* #8A8580 */
+
   /* Border Colors */
-  --color-border-primary: 0 0 0;
-  --color-border-opacity: 0.1;
-  --color-border-hover: 0 0 0;
-  --color-border-hover-opacity: 0.2;
-  
+  --color-border-primary: 26 24 21;
+  --color-border-opacity: 0.08;
+  --color-border-hover: 26 24 21;
+  --color-border-hover-opacity: 0.15;
+
   /* Interactive Elements */
-  --color-interactive-bg: 0 0 0;
-  --color-interactive-bg-opacity: 0.05;
-  --color-interactive-hover: 0 0 0;
-  --color-interactive-hover-opacity: 0.1;
-  
+  --color-interactive-bg: 26 24 21;
+  --color-interactive-bg-opacity: 0.04;
+  --color-interactive-hover: 26 24 21;
+  --color-interactive-hover-opacity: 0.07;
+
   /* Focus/Ring Colors */
-  --color-ring: 59 130 246; /* blue-500 */
-  --color-ring-opacity: 0.5;
-  
+  --color-ring: 75 115 158;
+  --color-ring-opacity: 0.4;
+
   /* Input Fields */
   --color-input-bg: 255 255 255;
   --color-input-bg-opacity: 1;
-  --color-input-border: 203 213 225; /* slate-300 */
+  --color-input-border: 210 205 198;
   --color-input-border-opacity: 1;
-  --color-input-placeholder: 148 163 184; /* slate-400 */
-  
-  /* Error/Success Colors (keep same for consistency) */
-  --color-error: 239 68 68; /* red-500 */
-  --color-success: 34 197 94; /* green-500 */
-  --color-warning: 245 158 11; /* amber-500 */
-  --color-info: 59 130 246; /* blue-500 */
-  
+  --color-input-placeholder: 168 164 160;
+
+  /* Semantic Colors — slightly darker for light bg contrast */
+  --color-error: 184 85 85;
+  --color-success: 77 140 106;
+  --color-warning: 184 144 62;
+  --color-info: 75 115 158;
+
+  /* Accent — deeper blue for light backgrounds */
+  --color-accent: 75 115 158;         /* #4B739E */
+  --color-accent-hover: 60 100 143;   /* #3C648F */
+  --color-accent-muted: 75 115 158;
+  --color-accent-muted-opacity: 0.1;
+
   /* Backdrop */
-  --backdrop-blur: blur(8px);
-  --backdrop-opacity: 0.95;
+  --backdrop-blur: blur(16px);
+  --backdrop-opacity: 0.92;
+
+  /* Sidebar */
+  --sidebar-active-bg: 75 115 158;
+  --sidebar-active-opacity: 0.08;
 }
-
-

@@ -14,40 +14,40 @@ import { MediaFileEditComponent } from './media-file-edit.component';
   standalone: true,
   imports: [CommonModule, FormsModule, NgIconComponent, ModalComponent, FileUploadComponent, MediaFileEditComponent],
   template: `
-    <div class="p-6 space-y-4">
+    <div class="p-6 space-y-6 animate-fade-in">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-text-primary">Media Library</h1>
-        <button 
+        <h1 class="font-display text-3xl text-text-primary">Media Library</h1>
+        <button
           (click)="openUploadModal()"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-info text-white rounded-md hover:opacity-90 transition-opacity">
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md">
           <ng-icon name="heroCloudArrowUp" class="w-5 h-5"></ng-icon>
           Upload Files
         </button>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <div class="relative flex-1 max-w-md">
-          <ng-icon name="heroMagnifyingGlass" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted"></ng-icon>
-          <input 
+          <ng-icon name="heroMagnifyingGlass" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted"></ng-icon>
+          <input
             type="text"
             [(ngModel)]="filter.search"
             (input)="onSearch()"
             placeholder="Search files..."
-            class="w-full pl-10 pr-4 py-2 rounded-md bg-input border border-input text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-focus">
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-input border border-input text-text-primary text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 ring-focus transition-shadow">
         </div>
-        <select 
+        <select
           [(ngModel)]="filter.contentType"
           (change)="loadFiles()"
-          class="px-3 py-2 rounded-md bg-input border border-input text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+          class="px-4 py-2.5 rounded-xl bg-input border border-input text-text-primary text-sm focus:outline-none focus:ring-2 ring-focus transition-shadow">
           <option value="">All Types</option>
           <option value="image">Images</option>
           <option value="video">Videos</option>
           <option value="application">Documents</option>
         </select>
-        <select 
+        <select
           [(ngModel)]="pageSize"
           (change)="loadFiles()"
-          class="px-3 py-2 rounded-md bg-input border border-input text-text-primary focus:outline-none focus:ring-2 focus:ring-focus">
+          class="px-4 py-2.5 rounded-xl bg-input border border-input text-text-primary text-sm focus:outline-none focus:ring-2 ring-focus transition-shadow">
           <option [value]="20">20 per page</option>
           <option [value]="50">50 per page</option>
           <option [value]="100">100 per page</option>
@@ -55,13 +55,14 @@ import { MediaFileEditComponent } from './media-file-edit.component';
       </div>
 
       @if (loading()) {
-        <div class="text-center py-8 text-text-muted">Loading files...</div>
+        <div class="text-center py-12 text-text-muted font-body text-sm">Loading files...</div>
       } @else if (files().length === 0) {
-        <div class="text-center py-8 text-text-muted">
-          <p class="mb-4">No files found</p>
-          <button 
+        <div class="text-center py-16 text-text-muted animate-fade-in-up">
+          <ng-icon name="heroPhoto" class="w-12 h-12 mx-auto mb-3 text-text-muted opacity-50"></ng-icon>
+          <p class="mb-5 text-sm">No files found</p>
+          <button
             (click)="openUploadModal()"
-            class="inline-flex items-center gap-2 px-4 py-2 border border-border-primary rounded-md hover:bg-interactive-hover transition-colors">
+            class="inline-flex items-center gap-2 px-5 py-2.5 border border-border-primary rounded-xl hover:bg-interactive-hover transition-colors text-sm">
             <ng-icon name="heroCloudArrowUp" class="w-5 h-5"></ng-icon>
             Upload your first file
           </button>
@@ -69,57 +70,57 @@ import { MediaFileEditComponent } from './media-file-edit.component';
       } @else {
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
           @for (file of files(); track file.id) {
-            <div class="bg-bg-secondary border border-border-primary rounded-lg overflow-hidden hover:border-info transition-colors group">
-              <div class="aspect-square bg-bg-tertiary relative">
+            <div class="bg-bg-secondary border border-border-primary rounded-2xl overflow-hidden hover:border-accent/50 hover:shadow-lg transition-all duration-300 group">
+              <div class="aspect-square bg-bg-tertiary relative overflow-hidden">
                 @if (file.isImage && file.url) {
-                  <img [src]="file.url" [alt]="file.displayName || file.fileName" class="w-full h-full object-cover">
+                  <img [src]="file.url" [alt]="file.displayName || file.fileName" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
                 } @else {
                   <div class="w-full h-full flex items-center justify-center">
                     <ng-icon name="heroPhoto" class="w-12 h-12 text-text-muted"></ng-icon>
                   </div>
                 }
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <button 
+                <div class="absolute inset-0 bg-black/50 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2">
+                  <button
                     (click)="openEditModal(file)"
-                    class="p-2 bg-bg-secondary rounded hover:bg-interactive-hover transition-colors">
+                    class="p-2.5 bg-bg-secondary/90 rounded-lg hover:bg-bg-secondary transition-colors shadow-sm">
                     <ng-icon name="heroPencilSquare" class="w-4 h-4 text-text-primary"></ng-icon>
                   </button>
-                  <button 
+                  <button
                     (click)="deleteFile(file)"
-                    class="p-2 bg-bg-secondary rounded hover:bg-interactive-hover transition-colors text-error">
+                    class="p-2.5 bg-bg-secondary/90 rounded-lg hover:bg-bg-secondary transition-colors text-error shadow-sm">
                     <ng-icon name="heroTrash" class="w-4 h-4"></ng-icon>
                   </button>
                 </div>
               </div>
-              <div class="p-2">
-                <p class="text-xs text-text-primary truncate" [title]="file.displayName || file.fileName">
+              <div class="p-3">
+                <p class="text-sm font-medium text-text-primary truncate" [title]="file.displayName || file.fileName">
                   {{ file.displayName || file.fileName }}
                 </p>
-                <p class="text-xs text-text-muted">{{ formatFileSize(file.fileSize) }}</p>
+                <p class="text-xs text-text-muted mt-0.5">{{ formatFileSize(file.fileSize) }}</p>
               </div>
             </div>
           }
         </div>
 
         @if (totalPages() > 1) {
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between pt-2">
             <p class="text-sm text-text-muted">
               Showing {{ (currentPage() - 1) * pageSize + 1 }} to {{ Math.min(currentPage() * pageSize, totalCount()) }} of {{ totalCount() }} files
             </p>
             <div class="flex items-center gap-2">
-              <button 
+              <button
                 (click)="goToPage(currentPage() - 1)"
                 [disabled]="currentPage() === 1"
-                class="px-3 py-1 border border-border-primary rounded-md hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                class="px-4 py-2 text-sm border border-border-primary rounded-xl hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Previous
               </button>
-              <span class="text-sm text-text-primary">
+              <span class="text-sm text-text-secondary px-2">
                 Page {{ currentPage() }} of {{ totalPages() }}
               </span>
-              <button 
+              <button
                 (click)="goToPage(currentPage() + 1)"
                 [disabled]="currentPage() === totalPages()"
-                class="px-3 py-1 border border-border-primary rounded-md hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                class="px-4 py-2 text-sm border border-border-primary rounded-xl hover:bg-interactive-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
                 Next
               </button>
             </div>
@@ -127,7 +128,7 @@ import { MediaFileEditComponent } from './media-file-edit.component';
         }
       }
 
-      <app-modal 
+      <app-modal
         [title]="uploadModalTitle()"
         [isOpen]="showUploadModal()"
         (closed)="closeUploadModal()">
@@ -138,16 +139,16 @@ import { MediaFileEditComponent } from './media-file-edit.component';
           (filesSelected)="onFilesSelected($event)">
         </app-file-upload>
         <div footer>
-          <button 
+          <button
             (click)="uploadFiles()"
             [disabled]="selectedFiles().length === 0 || uploading()"
-            class="px-4 py-2 bg-info text-white rounded-md hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+            class="px-5 py-2.5 bg-accent text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm">
             {{ uploading() ? 'Uploading...' : 'Upload' }}
           </button>
         </div>
       </app-modal>
 
-      <app-modal 
+      <app-modal
         [title]="editModalTitle()"
         [isOpen]="showEditModal()"
         (closed)="closeEditModal()">

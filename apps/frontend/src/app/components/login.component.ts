@@ -12,29 +12,86 @@ import { firstValueFrom } from 'rxjs';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="min-h-screen bg-bg-primary text-text-primary flex items-center justify-center px-4">
-      <div class="w-full max-w-md">
-        <div class="bg-bg-secondary border border-border-primary rounded-xl shadow-sm p-6">
-          <div class="mb-4 flex items-center justify-center">
-            <h2 class="text-xl font-semibold">{{ appConfig.appName }}</h2>
-            
+    <div class="min-h-screen bg-bg-primary text-text-primary flex items-center justify-center px-4 relative overflow-hidden"
+         style="background:
+           radial-gradient(ellipse 80% 60% at 20% 10%, rgba(110,148,190,0.07) 0%, transparent 60%),
+           radial-gradient(ellipse 60% 50% at 80% 80%, rgba(110,148,190,0.05) 0%, transparent 55%),
+           radial-gradient(ellipse 90% 70% at 50% 50%, rgba(110,148,190,0.02) 0%, transparent 70%),
+           rgb(var(--color-bg-primary));">
+
+      <!-- Decorative ambient light -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-[0.04] pointer-events-none"
+           style="background: radial-gradient(ellipse at center, rgba(110,148,190,1) 0%, transparent 70%);"></div>
+
+      <div class="w-full max-w-[420px] animate-scale-in">
+
+        <!-- Login Card -->
+        <div class="relative bg-bg-secondary rounded-2xl p-10 border border-border-primary"
+             style="box-shadow:
+               0 0 0 1px rgba(110,148,190,0.04),
+               0 4px 24px -4px rgba(0,0,0,0.3),
+               0 12px 48px -8px rgba(0,0,0,0.2),
+               inset 0 1px 0 0 rgba(255,255,255,0.03);">
+
+          <!-- Subtle top accent line -->
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 h-[1px] w-24 bg-accent opacity-30 rounded-full"></div>
+
+          <!-- Brand heading -->
+          <div class="text-center mb-8 animate-fade-in-up stagger-1">
+            <h1 class="font-display text-4xl tracking-tight text-text-primary mb-2">Dynamo CMS</h1>
+            <p class="font-display italic text-text-muted text-base tracking-wide">Content, crafted.</p>
           </div>
-          <form class="space-y-3" [formGroup]="form" (ngSubmit)="onSubmit()">
-            <label class="block">
-              <div class="text-xs text-text-muted mb-1">Email</div>
-              <input class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent" formControlName="email" type="email" required />
+
+          <!-- Divider -->
+          <div class="w-full h-px bg-border-primary mb-8 animate-fade-in stagger-2"></div>
+
+          <!-- Form -->
+          <form class="space-y-5" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <label class="block animate-fade-in-up stagger-3">
+              <div class="text-xs font-medium tracking-widest uppercase text-text-muted mb-2">Email</div>
+              <input
+                class="w-full rounded-lg bg-input border border-input px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 ring-focus focus:border-transparent transition-all duration-200"
+                formControlName="email"
+                type="email"
+                placeholder="you@example.com"
+                required />
             </label>
-            <label class="block">
-              <div class="text-xs text-text-muted mb-1">Password</div>
-              <input class="w-full rounded-md bg-input border border-input px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent" formControlName="password" type="password" required />
+
+            <label class="block animate-fade-in-up stagger-4">
+              <div class="text-xs font-medium tracking-widest uppercase text-text-muted mb-2">Password</div>
+              <input
+                class="w-full rounded-lg bg-input border border-input px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 ring-focus focus:border-transparent transition-all duration-200"
+                formControlName="password"
+                type="password"
+                placeholder="Enter your password"
+                required />
             </label>
-            <button type="submit" [disabled]="form.invalid || loading()" class="inline-flex w-100 mt-2 items-center justify-center rounded-md border border-border-primary px-4 py-2 hover:bg-interactive-hover disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
-              {{ loading() ? 'Signing in…' : 'Sign in' }}
-            </button>
+
+            <div class="pt-2 animate-fade-in-up stagger-5">
+              <button
+                type="submit"
+                [disabled]="form.invalid || loading()"
+                class="w-full bg-accent text-white font-medium rounded-lg px-4 py-3 text-sm tracking-wide transition-all duration-200 hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+                style="box-shadow: 0 2px 12px -2px rgba(110,148,190,0.35);">
+                {{ loading() ? 'Signing in...' : 'Sign in' }}
+              </button>
+            </div>
           </form>
-          <div *ngIf="message()" class="text-success mt-3">{{ message() }}</div>
-          <div *ngIf="error()" class="text-error mt-2">{{ error() }}</div>
+
+          <!-- Messages -->
+          <div class="animate-fade-in-up stagger-6">
+            <div *ngIf="message()" class="text-success mt-5 text-sm text-center">{{ message() }}</div>
+            <div *ngIf="error()" class="text-error mt-5 text-sm text-center">{{ error() }}</div>
+          </div>
+
         </div>
+
+        <!-- Footer text -->
+        <p class="text-center text-text-muted text-xs mt-6 tracking-wide animate-fade-in stagger-6">
+          {{ appConfig.appName }}
+        </p>
+
       </div>
     </div>
   `
