@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace Dynamo.CMS.API.Models;
@@ -36,4 +36,10 @@ public class DataCollectionColumn : IEntity<long>
     [Column("base_type")]
     public string BaseTypeName { get; set; } = null!;
     public virtual BaseType? BaseType { get; set; }
+
+    /// <summary>
+    /// Custom properties for field configuration (e.g., slug source field, validation rules)
+    /// </summary>
+    [Column("custom_properties")]
+    public string? CustomProperties { get; set; }
 }

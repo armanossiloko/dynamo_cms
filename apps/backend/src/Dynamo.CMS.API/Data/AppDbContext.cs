@@ -63,6 +63,9 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
             .HasForeignKey(e => e.DataCollectionName)
             .IsRequired();
 
+        builder.Entity<DataCollectionColumn>().ToTable("dynamo_data_collection_columns");
+        builder.Entity<DataCollectionColumn>().Property(e => e.CustomProperties).HasColumnType("jsonb");
+
         builder.Entity<UploadedFileEntity>()
             .HasOne(e => e.Uploader)
             .WithMany()
@@ -238,6 +241,7 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
             new() { Name = "file", DisplayName = "File", DbDataType = GetDataTypeName<UploadedFile>(), DataType = "object", Description = "Single file attachment" },
             new() { Name = "file[]", DisplayName = "File Array", DbDataType = ObjectsNpgsqlType, DataType = "object[]", Description = "Multiple file attachments" },
             new() { Name = "dynamiczone", DisplayName = "Dynamic Zone", DbDataType = ObjectsNpgsqlType, DataType = "object", Description = "Array of reusable components" },
+            new() { Name = "slug", DisplayName = "Slug (URL-safe)", DbDataType = "varchar", DataType = "string", Description = "URL-safe slug auto-generated from another field" },
         };
 
         var existingBaseTypes = BaseTypes.AsNoTracking().ToList();

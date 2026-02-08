@@ -6,7 +6,6 @@ using Dynamo.CMS.API.Models;
 using Dynamo.CMS.API.Options;
 using Dynamo.CMS.API.Services;
 using Dynamo.CMS.API.Storage;
-using HotChocolate;
 using HotChocolate.Execution;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -30,6 +29,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<CatalogMapper>();
 builder.Services.AddSingleton<SqlValidator>();
 builder.Services.AddSingleton<PostgreSQLGenerator>();
+builder.Services.AddSingleton<ISlugService, SlugService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

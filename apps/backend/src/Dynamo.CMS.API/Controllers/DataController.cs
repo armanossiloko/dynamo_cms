@@ -1,4 +1,4 @@
-﻿using Dynamo.CMS.API.Contracts;
+using Dynamo.CMS.API.Contracts;
 using Dynamo.CMS.API.Data;
 using Dynamo.CMS.API.Extensions;
 using Dynamo.CMS.API.Models;
@@ -24,18 +24,21 @@ public class DataController : ControllerBase
     private readonly AppDbContext _context;
     private readonly PostgreSQLGenerator _sqlGenerator;
     private readonly IFileUploadService _fileUploadService;
+    private readonly ISlugService _slugService;
 
     public DataController(
         ILogger<DataController> logger,
         AppDbContext context,
         PostgreSQLGenerator sqlGenerator,
-        IFileUploadService fileUploadService
+        IFileUploadService fileUploadService,
+        ISlugService slugService
         )
     {
         _logger = logger;
         _context = context;
         _sqlGenerator = sqlGenerator;
         _fileUploadService = fileUploadService;
+        _slugService = slugService;
     }
 
     /// <summary>
@@ -293,6 +296,9 @@ public class DataController : ControllerBase
                 await ResolveMediaLibraryFileReferencesAsync(dataCollection, data);
             }
 
+            // Process slug fields - auto-generate slugs from source fields
+            await ProcessSlugFieldsAsync(dataCollection, data);
+
             // Get base types for reference handling
             var baseTypes = await _context.BaseTypes.AsNoTracking().ToListAsync();
 
@@ -432,6 +438,9 @@ public class DataController : ControllerBase
                 // Resolve media library file references (file IDs) to UploadedFile objects
                 await ResolveMediaLibraryFileReferencesAsync(dataCollection, data);
             }
+
+            // Process slug fields - auto-generate slugs from source fields if slug not provided
+            await ProcessSlugFieldsAsync(dataCollection, data);
 
             // Find the primary key column
             var primaryKeyColumn = dataCollection.Columns
@@ -908,6 +917,96 @@ public class DataController : ControllerBase
                 title: "Internal Server Error",
                 instance: HttpContext.Request.Path
             );
+        }
+    }
+
+    /// <summary>
+    /// Processes slug fields by auto-generating slugs from their configured source fields
+    /// </summary>
+    private async Task ProcessSlugFieldsAsync(
+        DataCollection dataCollection,
+        Dictionary<string, object?> data)
+    {
+        var slugColumns = dataCollection.Columns
+            .Where(c => c.BaseTypeName == "slug")
+            .ToList();
+
+        if (!slugColumns.Any())
+            return;
+
+        foreach (var slugColumn in slugColumns)
+        {
+            // If slug already provided by user, skip auto-generation
+            if (data.ContainsKey(slugColumn.Name) && data[slugColumn.Name] != null)
+                continue;
+
+            // Parse custom properties to find source field
+            string? sourceField = null;
+            if (!string.IsNullOrEmpty(slugColumn.CustomProperties))
+            {
+                try
+                {
+                    var customProps = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(slugColumn.CustomProperties);
+                    if (customProps != null && customProps.TryGetValue("sourceField", out var sourceFieldElement))
+                    {
+                        sourceField = sourceFieldElement.GetString();
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogWarning(ex, "Failed to parse custom properties for slug column {ColumnName}", slugColumn.Name);
+                }
+            }
+
+            // Default to "title" or "name" field if no source field configured
+            if (string.IsNullOrEmpty(sourceField))
+            {
+                sourceField = dataCollection.Columns.FirstOrDefault(c => c.Name.Equals("title", StringComparison.OrdinalIgnoreCase))?.Name
+                    ?? dataCollection.Columns.FirstOrDefault(c => c.Name.Equals("name", StringComparison.OrdinalIgnoreCase))?.Name;
+            }
+
+            if (string.IsNullOrEmpty(sourceField) || !data.ContainsKey(sourceField))
+                continue;
+
+            var sourceValue = data[sourceField]?.ToString();
+            if (string.IsNullOrEmpty(sourceValue))
+                continue;
+
+            // Generate slug
+            string slug;
+            if (slugColumn.Unique)
+            {
+                // For unique slugs, check existing values in the collection
+                var existingSlugs = await GetExistingSlugsAsync(dataCollection.Name, slugColumn.Name);
+                slug = _slugService.GenerateUniqueSlug(sourceValue, existingSlugs);
+            }
+            else
+            {
+                slug = _slugService.GenerateSlug(sourceValue);
+            }
+
+            data[slugColumn.Name] = slug;
+            _logger.LogDebug("Generated slug '{Slug}' for column {ColumnName} from {SourceField}", slug, slugColumn.Name, sourceField);
+        }
+    }
+
+    /// <summary>
+    /// Gets all existing slug values from a collection for uniqueness checks
+    /// </summary>
+    private async Task<List<string>> GetExistingSlugsAsync(string collectionName, string slugColumnName)
+    {
+        try
+        {
+            var query = $"SELECT \"{slugColumnName}\" FROM \"{collectionName}\" WHERE \"{slugColumnName}\" IS NOT NULL";
+            var results = _context.GetDbRecords(query);
+            return results.Select(r => r[slugColumnName]?.ToString() ?? string.Empty)
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to get existing slugs for collection {CollectionName}, column {ColumnName}", collectionName, slugColumnName);
+            return new List<string>();
         }
     }
 }
