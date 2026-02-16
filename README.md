@@ -126,8 +126,4 @@ Both the backend and frontend repositories' git histories have been preserved in
 
 ## License
 
-[Add your license here]
-
-## Support
-
-[Add support information here]
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
