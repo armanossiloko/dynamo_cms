@@ -18,6 +18,10 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.OptionsName).Get<JwtOptions>()!;
+if (string.IsNullOrWhiteSpace(jwtOptions.Key))
+{
+    throw new InvalidOperationException("JWT signing key is missing. Configure 'Jwt:Key' (or environment variable 'Jwt__Key').");
+}
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.OptionsName));
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection(ApplicationOptions.OptionsName));
@@ -118,11 +122,28 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("Default", policy =>
     {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        if (builder.Environment.IsDevelopment())
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }
+        else
+        {
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+            if (allowedOrigins.Length == 0)
+            {
+                throw new InvalidOperationException("CORS allowed origins not configured. Set 'Cors:AllowedOrigins'.");
+            }
+
+            policy
+                .WithOrigins(allowedOrigins)
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }
     });
 });
 
@@ -223,25 +244,35 @@ using (var scope = app.Services.CreateScope())
             }
         }
 
-        var adminEmail = "admin@dynamo.com";
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        if (adminUser is null)
+        var shouldSeedAdmin = builder.Configuration.GetValue("Seed:AdminUser:Enabled", false);
+        if (shouldSeedAdmin)
         {
-            adminUser = new User
+            var adminEmail = builder.Configuration.GetValue<string>("Seed:AdminUser:Email") ?? "admin@dynamo.com";
+            var adminPassword = builder.Configuration.GetValue<string>("Seed:AdminUser:Password");
+            if (string.IsNullOrWhiteSpace(adminPassword))
             {
-                UserName = "admin",
-                Email = adminEmail,
-                FirstName = "Admin",
-                LastName = "User",
-                EmailConfirmed = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                IsActive = true,
-            };
+                throw new InvalidOperationException("Admin seeding enabled but 'Seed:AdminUser:Password' is missing.");
+            }
 
-            var result = await userManager.CreateAsync(adminUser, "Dynamo123!");
-            if (result.Succeeded)
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser is null)
             {
-                await userManager.AddToRoleAsync(adminUser, "Admin");
+                adminUser = new User
+                {
+                    UserName = "admin",
+                    Email = adminEmail,
+                    FirstName = "Admin",
+                    LastName = "User",
+                    EmailConfirmed = true,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    IsActive = true,
+                };
+
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                }
             }
         }
     }
@@ -303,7 +334,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseCors("Default");
 
 // Enable request body buffering for JSON requests (needed when manually reading Request.Body)
 app.Use(async (context, next) =>
