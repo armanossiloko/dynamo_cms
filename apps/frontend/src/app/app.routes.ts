@@ -17,6 +17,7 @@ import { GraphQLVoyagerComponent } from './components/graphql/graphql-voyager.co
 import { SingleTypesListComponent } from './components/single-types/single-types-list.component';
 import { SingleTypeBuilderComponent } from './components/single-types/single-type-builder.component';
 import { SingleTypeEditorComponent } from './components/single-types/single-type-editor.component';
+import { ApiKeysListComponent } from './components/api-keys/api-keys-list.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -43,6 +44,7 @@ export const routes: Routes = [
       { path: 'webhooks', component: WebhooksAdminComponent },
       { path: 'versions', component: VersionsAdminComponent },
       { path: 'components', component: DynamicZoneComponent },
+      { path: 'api-keys', component: ApiKeysListComponent },
       { path: 'swagger', redirectTo: 'api-docs', pathMatch: 'full' }
     ]
   },

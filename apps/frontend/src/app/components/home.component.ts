@@ -14,7 +14,8 @@ import {
   heroClock,
   heroPuzzlePiece,
   heroCommandLine,
-  heroBookOpen
+  heroBookOpen,
+  heroKey
 } from '@ng-icons/heroicons/outline';
 import { ThemeSwitcherComponent } from './theme-switcher.component';
 import { LocaleSelectorComponent } from './locale-selector/locale-selector.component';
@@ -158,6 +159,14 @@ import { environment } from '../../environments/environment';
                 [ngClass]="{ 'justify-center px-0 gap-0': sidebarCollapsed }">
                 <span class="inline-flex w-5 h-5 items-center justify-center shrink-0"><ng-icon name="heroUserPlus" size="18"></ng-icon></span>
                 <span [ngClass]="{ 'hidden': sidebarCollapsed }" class="text-[13px] font-medium truncate">Register User</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/home/api-keys" routerLinkActive="bg-sidebar-active text-accent !border-accent"
+                class="flex items-center rounded-lg hover:bg-interactive-hover px-2.5 py-2 gap-2.5 transition-all duration-200 border-l-2 border-transparent"
+                [ngClass]="{ 'justify-center px-0 gap-0': sidebarCollapsed }">
+                <span class="inline-flex w-5 h-5 items-center justify-center shrink-0"><ng-icon name="heroKey" size="18"></ng-icon></span>
+                <span [ngClass]="{ 'hidden': sidebarCollapsed }" class="text-[13px] font-medium truncate">API Keys</span>
               </a>
             </li>
             <!-- API Section -->

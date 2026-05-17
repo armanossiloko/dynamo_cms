@@ -14,12 +14,14 @@ import { heroXMark } from '@ng-icons/heroicons/outline';
         <div class="relative z-10 w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-bg-secondary border border-border-primary rounded-2xl shadow-2xl animate-slide-up" (click)="$event.stopPropagation()">
           <div class="sticky top-0 z-20 flex items-center justify-between px-6 py-5 border-b border-border-primary bg-bg-secondary/95 backdrop-blur-sm rounded-t-2xl">
             <h2 class="font-display text-xl text-text-primary">{{ title }}</h2>
-            <button
-              (click)="close()"
-              class="inline-flex items-center justify-center rounded-xl p-2 hover:bg-interactive-hover active:scale-95 transition-all"
-              aria-label="Close modal">
-              <ng-icon name="heroXMark" class="w-5 h-5 text-text-muted"></ng-icon>
-            </button>
+            @if (showClose) {
+              <button
+                (click)="close()"
+                class="inline-flex items-center justify-center rounded-xl p-2 hover:bg-interactive-hover active:scale-95 transition-all"
+                aria-label="Close modal">
+                <ng-icon name="heroXMark" class="w-5 h-5 text-text-muted"></ng-icon>
+              </button>
+            }
           </div>
           <div class="px-6 py-6">
             <ng-content></ng-content>
@@ -68,6 +70,7 @@ export class ModalComponent {
   @Input() isOpen: boolean = false;
   @Input() showFooter: boolean = true;
   @Input() closeOnBackdrop: boolean = true;
+  @Input() showClose: boolean = true;
   @Output() closed = new EventEmitter<void>();
 
   close(): void {

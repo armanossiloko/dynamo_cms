@@ -6,6 +6,7 @@ using Dynamo.CMS.API.Models;
 using Dynamo.CMS.API.Options;
 using Dynamo.CMS.API.Services;
 using Dynamo.CMS.API.Storage;
+using Dynamo.CMS.API.Authentication;
 using HotChocolate.Execution;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -74,103 +75,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
         ClockSkew = TimeSpan.Zero
     };
-});
-
-builder.Services.AddAuthorization();
-
-builder.Services.AddControllers()
-    .ConfigureApiBehaviorOptions(options =>
-    {
-        // Allow multipart/form-data without requiring [FromForm] on all parameters
-        options.SuppressConsumesConstraintForFormFileParameters = true;
-    });
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "Dynamo CMS API",
-        Version = "v1",
-        Description = "API for Dynamo CMS",
-    });
-
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("Default", policy =>
-    {
-        if (builder.Environment.IsDevelopment())
-        {
-            policy
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        }
-        else
-        {
-            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
-            if (allowedOrigins.Length == 0)
-            {
-                throw new InvalidOperationException("CORS allowed origins not configured. Set 'Cors:AllowedOrigins'.");
-            }
-
-            policy
-                .WithOrigins(allowedOrigins)
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        }
-    });
-});
-
-builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IIdentityService, IdentityService>();
-builder.Services.AddScoped<IUserManagementService, UserManagementService>();
-builder.Services.AddScoped<IDynamicSwaggerService, DynamicSwaggerService>();
-builder.Services.AddScoped<IFileUploadService, FileUploadService>();
-
-// Phase 2 services
-builder.Services.AddScoped<ILocalizationService, LocalizationService>();
-builder.Services.AddScoped<IComponentService, ComponentService>();
-builder.Services.AddScoped<IStorageProvider>(sp =>
-{
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    var storagePath = configuration.GetValue("Storage:LocalStoragePath", "files");
-    var publicBaseUrl = configuration.GetValue("Storage:PublicBaseUrl", "/files");
-    return new Dynamo.CMS.API.Storage.LocalStorageProvider(storagePath, publicBaseUrl);
-});
-builder.Services.AddScoped<IImageProcessingService, ImageProcessingService>();
-
-// Phase 1 services
-builder.Services.AddHttpClient<IWebhookService, WebhookService>();
-builder.Services.AddScoped<IWebhookService, WebhookService>();
-builder.Services.AddScoped<IContentSchedulerService, ContentSchedulerService>();
-builder.Services.AddScoped<IVersioningService, VersioningService>();
-builder.Services.AddScoped<ISingleTypeService, SingleTypeService>();
+})
+.AddApiKey();
 
 // Background services
 builder.Services.AddHostedService<WebhookRetryBackgroundService>();

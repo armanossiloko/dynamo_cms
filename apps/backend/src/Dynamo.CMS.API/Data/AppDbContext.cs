@@ -38,7 +38,9 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
 
     public DbSet<SingleTypeData> SingleTypeData { get; set; }
 
-    public DbSet<FieldOption> FieldOptions { get; set; }
+public DbSet<FieldOption> FieldOptions { get; set; }
+
+    public DbSet<ApiKey> ApiKeys { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
@@ -210,6 +212,20 @@ public class AppDbContext : IdentityDbContext<User, Role, long, UserClaim, UserR
         builder.Entity<FieldOption>().ToTable("dynamo_field_options");
         builder.Entity<FieldOption>().Property(e => e.Label).HasMaxLength(255).IsRequired();
         builder.Entity<FieldOption>().Property(e => e.Value).HasMaxLength(255).IsRequired();
+
+        // ApiKey configuration
+        builder.Entity<ApiKey>().ToTable("dynamo_api_keys");
+        builder.Entity<ApiKey>().Property(e => e.Name).HasMaxLength(255).IsRequired();
+        builder.Entity<ApiKey>().Property(e => e.KeyHash).HasMaxLength(64).IsRequired();
+        builder.Entity<ApiKey>().Property(e => e.AllowedCollections).HasColumnType("jsonb");
+        builder.Entity<ApiKey>().HasIndex(e => e.KeyHash).IsUnique();
+        builder.Entity<ApiKey>().HasIndex(e => e.UserId);
+        builder.Entity<ApiKey>().HasIndex(e => e.IsActive);
+        builder.Entity<ApiKey>()
+            .HasOne(e => e.User)
+            .WithMany()
+            .HasForeignKey(e => e.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
 
