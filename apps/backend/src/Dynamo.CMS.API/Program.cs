@@ -36,8 +36,13 @@ builder.Services.AddSingleton<SqlValidator>();
 builder.Services.AddSingleton<PostgreSQLGenerator>();
 builder.Services.AddSingleton<ISlugService, SlugService>();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.EnableDynamicJson();
+var dataSource = dataSourceBuilder.Build();
+builder.Services.AddSingleton(dataSource);
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(dataSource));
 
 builder.Services.AddIdentity<User, Role>(options =>
 {
@@ -77,6 +82,103 @@ builder.Services.AddAuthentication(options =>
     };
 })
 .AddApiKey();
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        // Allow multipart/form-data without requiring [FromForm] on all parameters
+        options.SuppressConsumesConstraintForFormFileParameters = true;
+    });
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Dynamo CMS API",
+        Version = "v1",
+        Description = "API for Dynamo CMS",
+    });
+
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Default", policy =>
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }
+        else
+        {
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+            if (allowedOrigins.Length == 0)
+            {
+                throw new InvalidOperationException("CORS allowed origins not configured. Set 'Cors:AllowedOrigins'.");
+            }
+
+            policy
+                .WithOrigins(allowedOrigins)
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        }
+    });
+});
+
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IDynamicSwaggerService, DynamicSwaggerService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+
+// Phase 2 services
+builder.Services.AddScoped<ILocalizationService, LocalizationService>();
+builder.Services.AddScoped<IComponentService, ComponentService>();
+builder.Services.AddScoped<IStorageProvider>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var storagePath = configuration.GetValue("Storage:LocalStoragePath", "files");
+    var publicBaseUrl = configuration.GetValue("Storage:PublicBaseUrl", "/files");
+    return new Dynamo.CMS.API.Storage.LocalStorageProvider(storagePath, publicBaseUrl);
+});
+builder.Services.AddScoped<IImageProcessingService, ImageProcessingService>();
+
+// Phase 1 services
+builder.Services.AddHttpClient<IWebhookService, WebhookService>();
+builder.Services.AddScoped<IWebhookService, WebhookService>();
+builder.Services.AddScoped<IContentSchedulerService, ContentSchedulerService>();
+builder.Services.AddScoped<IVersioningService, VersioningService>();
+builder.Services.AddScoped<ISingleTypeService, SingleTypeService>();
 
 // Background services
 builder.Services.AddHostedService<WebhookRetryBackgroundService>();
@@ -136,7 +238,7 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<Role>>();
         var userManager = services.GetRequiredService<UserManager<User>>();
 
-        var roles = new[] { "Admin", "User" };
+        var roles = new[] { "Admin", "User", "Editor", "Developer" };
         foreach (var role in roles)
         {
             if (!await roleManager.RoleExistsAsync(role))
@@ -180,6 +282,13 @@ using (var scope = app.Services.CreateScope())
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
             }
+        }
+
+        var shouldSeedDemo = builder.Configuration.GetValue("Seed:DemoData:Enabled", false);
+        if (shouldSeedDemo)
+        {
+            var fileManager = services.GetRequiredService<IFileManager>();
+            await DemoDataSeeder.SeedAsync(dbContext, userManager, roleManager, fileManager);
         }
     }
     catch (Exception ex)

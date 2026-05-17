@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { ContentVersion, ContentVersionDiff } from '../models/content-version.model';
 
 @Injectable({ providedIn: 'root' })
 export class ContentVersionService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api/versions';
+  private readonly baseUrl = `${environment.apiUrl}/versions`;
 
   getVersions(collectionName: string, entryId: number): Observable<ContentVersion[]> {
     return this.http.get<ContentVersion[]>(`${this.baseUrl}/${collectionName}/${entryId}`);

@@ -18,6 +18,7 @@ export interface MediaFile {
   isImage: boolean;
   isVideo: boolean;
   isDocument: boolean;
+  folder?: string;
 }
 
 export interface MediaFileUpload {
@@ -52,4 +53,5 @@ export interface MediaFileFilter {
   sortDescending?: boolean;
   page?: number;
   pageSize?: number;
+  folder?: string;
 }

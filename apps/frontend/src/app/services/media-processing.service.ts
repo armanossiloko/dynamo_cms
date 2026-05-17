@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { MediaFolder, CreateMediaFolder, UpdateMediaFolder, ImageTransformRequest, FocalPoint, ImageMetadata, ImageCropRequest, ImageRotateRequest } from '../models/media.model';
 
 @Injectable({ providedIn: 'root' })
 export class ImageProcessingService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api/media';
+  private readonly baseUrl = `${environment.apiUrl}/media`;
 
   // Transformations
   transformImage(fileId: number, request: ImageTransformRequest): Observable<Blob> {
@@ -43,7 +44,7 @@ export class ImageProcessingService {
 @Injectable({ providedIn: 'root' })
 export class MediaFoldersService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api/media/folders';
+  private readonly baseUrl = `${environment.apiUrl}/media/folders`;
 
   getAll(): Observable<MediaFolder[]> {
     return this.http.get<MediaFolder[]>(this.baseUrl);

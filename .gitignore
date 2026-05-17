@@ -372,3 +372,6 @@ FodyWeavers.xsd
 
 # Jetbrains
 .idea/
+
+refs/
+files/

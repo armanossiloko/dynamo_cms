@@ -1,119 +1,109 @@
 /* ===========================================
-   Warm Obsidian Design System
-   Refined editorial CMS with steel-blue accents
+   Warm Obsidian — Studio Paper (refs)
+   Coral accent on warm cream / charcoal
    =========================================== */
 
 :root {
   /* Primary Background Colors — warm charcoal */
-  --color-bg-primary: 12 12 16;       /* #0C0C10 */
-  --color-bg-secondary: 20 20 26;     /* #14141A */
-  --color-bg-tertiary: 30 30 38;      /* #1E1E26 */
+  --color-bg-primary: 21 22 28;       /* #15161C */
+  --color-bg-secondary: 27 29 36;     /* #1B1D24 */
+  --color-bg-tertiary: 37 39 47;      /* #25272F */
 
   /* Text Colors — warm off-white */
-  --color-text-primary: 237 235 230;   /* #EDEBE6 */
-  --color-text-secondary: 168 164 160; /* #A8A4A0 */
-  --color-text-muted: 107 102 98;      /* #6B6662 */
+  --color-text-primary: 241 238 232;   /* #F1EEE8 */
+  --color-text-secondary: 181 178 170; /* #B5B2AA */
+  --color-text-muted: 121 118 112;     /* #797670 */
 
   /* Border Colors — warm low opacity */
-  --color-border-primary: 237 235 230;
+  --color-border-primary: 241 238 232;
   --color-border-opacity: 0.08;
-  --color-border-hover: 237 235 230;
+  --color-border-hover: 241 238 232;
   --color-border-hover-opacity: 0.15;
 
   /* Interactive Elements */
-  --color-interactive-bg: 237 235 230;
+  --color-interactive-bg: 241 238 232;
   --color-interactive-bg-opacity: 0.06;
-  --color-interactive-hover: 237 235 230;
+  --color-interactive-hover: 241 238 232;
   --color-interactive-hover-opacity: 0.1;
 
-  /* Focus/Ring Colors — steel blue accent */
-  --color-ring: 110 148 190;          /* steel blue */
-  --color-ring-opacity: 0.4;
+  /* Focus/Ring — coral accent */
+  --color-ring: 255 115 81;
+  --color-ring-opacity: 0.38;
 
   /* Input Fields */
-  --color-input-bg: 20 20 26;
+  --color-input-bg: 27 29 36;
   --color-input-bg-opacity: 0.8;
-  --color-input-border: 237 235 230;
+  --color-input-border: 241 238 232;
   --color-input-border-opacity: 0.1;
-  --color-input-placeholder: 107 102 98;
+  --color-input-placeholder: 121 118 112;
 
   /* Semantic Colors */
-  --color-error: 207 110 110;         /* muted rose */
-  --color-success: 107 175 141;       /* sage green */
-  --color-warning: 212 167 78;        /* warm gold */
-  --color-info: 110 148 190;          /* steel blue — matches accent */
+  --color-error: 224 122 122;
+  --color-success: 110 196 161;
+  --color-warning: 224 167 72;
+  --color-info: 110 155 224;
 
-  /* Accent — warm steel blue */
-  --color-accent: 110 148 190;        /* #6E94BE */
-  --color-accent-hover: 130 168 210;  /* #82A8D2 */
-  --color-accent-muted: 110 148 190;
-  --color-accent-muted-opacity: 0.15;
+  /* Accent — coral (dark) */
+  --color-accent: 255 115 81;         /* #FF7351 */
+  --color-accent-hover: 255 136 102;  /* #FF8866 */
+  --color-accent-muted: 255 115 81;
+  --color-accent-muted-opacity: 0.16;
 
   /* Backdrop */
   --backdrop-blur: blur(16px);
   --backdrop-opacity: 0.85;
 
   /* Sidebar active indicator */
-  --sidebar-active-bg: 110 148 190;
-  --sidebar-active-opacity: 0.1;
+  --sidebar-active-bg: 255 115 81;
+  --sidebar-active-opacity: 0.16;
 
   /* Typography */
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Manrope', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Light Theme */
 [data-theme="light"] {
-  /* Primary Background Colors — warm cream/linen */
-  --color-bg-primary: 250 248 243;    /* #FAF8F3 */
-  --color-bg-secondary: 243 239 234;  /* #F3EFEA */
-  --color-bg-tertiary: 232 227 219;   /* #E8E3DB */
+  --color-bg-primary: 250 246 240;    /* #FAF6F0 */
+  --color-bg-secondary: 241 236 227;  /* #F1ECE3 */
+  --color-bg-tertiary: 232 226 214;   /* #E8E2D6 */
 
-  /* Text Colors — warm near-black */
-  --color-text-primary: 26 24 21;     /* #1A1815 */
-  --color-text-secondary: 89 85 80;   /* #595550 */
-  --color-text-muted: 138 133 128;    /* #8A8580 */
+  --color-text-primary: 26 27 34;     /* #1A1B22 */
+  --color-text-secondary: 74 76 88;   /* #4A4C58 */
+  --color-text-muted: 138 140 149;    /* #8A8C95 */
 
-  /* Border Colors */
-  --color-border-primary: 26 24 21;
+  --color-border-primary: 26 27 34;
   --color-border-opacity: 0.08;
-  --color-border-hover: 26 24 21;
-  --color-border-hover-opacity: 0.15;
+  --color-border-hover: 26 27 34;
+  --color-border-hover-opacity: 0.14;
 
-  /* Interactive Elements */
-  --color-interactive-bg: 26 24 21;
-  --color-interactive-bg-opacity: 0.04;
-  --color-interactive-hover: 26 24 21;
-  --color-interactive-hover-opacity: 0.07;
+  --color-interactive-bg: 26 27 34;
+  --color-interactive-bg-opacity: 0.045;
+  --color-interactive-hover: 26 27 34;
+  --color-interactive-hover-opacity: 0.08;
 
-  /* Focus/Ring Colors */
-  --color-ring: 75 115 158;
-  --color-ring-opacity: 0.4;
+  --color-ring: 232 93 56;
+  --color-ring-opacity: 0.32;
 
-  /* Input Fields */
-  --color-input-bg: 255 255 255;
+  --color-input-bg: 255 252 246;
   --color-input-bg-opacity: 1;
-  --color-input-border: 210 205 198;
-  --color-input-border-opacity: 1;
-  --color-input-placeholder: 168 164 160;
+  --color-input-border: 26 27 34;
+  --color-input-border-opacity: 0.14;
+  --color-input-placeholder: 138 140 149;
 
-  /* Semantic Colors — slightly darker for light bg contrast */
-  --color-error: 184 85 85;
-  --color-success: 77 140 106;
-  --color-warning: 184 144 62;
-  --color-info: 75 115 158;
+  --color-error: 184 52 52;
+  --color-success: 42 127 98;
+  --color-warning: 185 128 24;
+  --color-info: 42 95 184;
 
-  /* Accent — deeper blue for light backgrounds */
-  --color-accent: 75 115 158;         /* #4B739E */
-  --color-accent-hover: 60 100 143;   /* #3C648F */
-  --color-accent-muted: 75 115 158;
+  --color-accent: 232 93 56;          /* #E85D38 */
+  --color-accent-hover: 208 72 37;    /* #D04825 */
+  --color-accent-muted: 232 93 56;
   --color-accent-muted-opacity: 0.1;
 
-  /* Backdrop */
   --backdrop-blur: blur(16px);
   --backdrop-opacity: 0.92;
 
-  /* Sidebar */
-  --sidebar-active-bg: 75 115 158;
-  --sidebar-active-opacity: 0.08;
+  --sidebar-active-bg: 232 93 56;
+  --sidebar-active-opacity: 0.1;
 }

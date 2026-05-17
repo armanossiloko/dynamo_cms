@@ -1,12 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { DataFilter, DataResponse, DataUpdate, DataBulkInsert } from '../models/data.model';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api/data';
+  private readonly baseUrl = `${environment.apiUrl}/data`;
 
   getData(collectionName: string, filter?: DataFilter): Observable<DataResponse> {
     let params = new HttpParams();

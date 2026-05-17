@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { ComponentDefinition, CreateComponent, UpdateComponent, ValidateComponent, ComponentValidationResult, ComponentCategory } from '../models/component.model';
 
 @Injectable({ providedIn: 'root' })
 export class ComponentService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api/components';
+  private readonly baseUrl = `${environment.apiUrl}/components`;
 
   getAll(): Observable<ComponentDefinition[]> {
     return this.http.get<ComponentDefinition[]>(this.baseUrl);

@@ -15,7 +15,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class SingleTypeService {
-  private apiUrl = `${environment.apiUrl}/api/admin/single-types`;
+  private apiUrl = `${environment.apiUrl}/admin/single-types`;
 
   constructor(private http: HttpClient) {}
 

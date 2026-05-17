@@ -24,6 +24,7 @@ public class MediaFileDTO
     public bool IsImage { get; set; }
     public bool IsVideo { get; set; }
     public bool IsDocument { get; set; }
+    public string? Folder { get; set; }
 }
 
 /// <summary>
@@ -74,5 +75,6 @@ public class MediaFileFilterDTO
     public bool? SortDescending { get; set; }
     public int? Page { get; set; }
     public int? PageSize { get; set; }
+    public string? Folder { get; set; }
 }
 

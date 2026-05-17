@@ -11,4 +11,8 @@ public class DataCollectionColumnDTO
     public required bool Nullable { get; set; }
 
     public required bool Visible { get; set; }
+
+    public bool Unique { get; set; }
+
+    public bool AutoIncrement { get; set; }
 }

@@ -5,7 +5,10 @@
       "Bash(findstr:*)",
       "Bash(dotnet add package:*)",
       "Bash(dotnet build:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(npx ng *)",
+      "Bash(dotnet run *)",
+      "Bash(npx tsc *)"
     ]
   }
 }

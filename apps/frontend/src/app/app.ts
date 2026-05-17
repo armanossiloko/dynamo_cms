@@ -7,7 +7,7 @@ import { AppConfig } from './config/app.config';
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  styles: [':host { display: block; height: 100%; }']
 })
 export class App {
   private readonly appConfig = inject(AppConfig);

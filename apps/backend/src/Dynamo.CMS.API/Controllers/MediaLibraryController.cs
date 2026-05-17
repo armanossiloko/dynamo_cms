@@ -89,6 +89,14 @@ public class MediaLibraryController : ControllerBase
                         subPath,
                         CancellationToken.None);
 
+                    int? folderId = null;
+                    if (!string.IsNullOrWhiteSpace(folder))
+                    {
+                        var mediaFolder = await _context.MediaFolders
+                            .FirstOrDefaultAsync(f => f.Name == folder);
+                        folderId = mediaFolder?.Id;
+                    }
+
                     // Create entity
                     var fileEntity = new UploadedFileEntity
                     {
@@ -103,11 +111,14 @@ public class MediaLibraryController : ControllerBase
                         RecordId = null,
                         ColumnName = null,
                         UploadedAt = DateTimeOffset.UtcNow,
-                        UploadedBy = userId
+                        UploadedBy = userId,
+                        FolderId = folderId
                     };
 
                     _context.UploadedFiles.Add(fileEntity);
                     await _context.SaveChangesAsync();
+
+                    await _context.Entry(fileEntity).Reference(f => f.Folder).LoadAsync();
 
                     // Create DTO
                     var mediaFile = MapToMediaFileDTO(fileEntity);
@@ -144,7 +155,14 @@ public class MediaLibraryController : ControllerBase
         {
             var query = _context.UploadedFiles
                 .Include(f => f.Uploader)
+                .Include(f => f.Folder)
                 .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter?.Folder))
+            {
+                var folderName = filter.Folder.Trim();
+                query = query.Where(f => f.Folder != null && f.Folder.Name == folderName);
+            }
 
             // Apply filters
             if (!string.IsNullOrWhiteSpace(filter?.Search))
@@ -509,7 +527,8 @@ public class MediaLibraryController : ControllerBase
             Extension = extension,
             IsImage = isImage,
             IsVideo = isVideo,
-            IsDocument = isDocument
+            IsDocument = isDocument,
+            Folder = entity.Folder?.Name
         };
     }
 }

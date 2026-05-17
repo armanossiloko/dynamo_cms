@@ -1,12 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { MediaFile, MediaFileUpload, MediaFileUpdate, MediaFileListResponse, MediaFileFilter } from '../models/media-library.model';
 
 @Injectable({ providedIn: 'root' })
 export class MediaLibraryService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api/media';
+  private readonly baseUrl = `${environment.apiUrl}/media`;
 
   uploadFiles(files: File[], metadata?: MediaFileUpload, folder?: string): Observable<MediaFile[]> {
     const formData = new FormData();
@@ -32,6 +33,7 @@ export class MediaLibraryService {
       if (filter.sortDescending !== undefined) params = params.set('sortDescending', filter.sortDescending.toString());
       if (filter.page) params = params.set('page', filter.page.toString());
       if (filter.pageSize) params = params.set('pageSize', filter.pageSize.toString());
+      if (filter.folder) params = params.set('folder', filter.folder);
     }
     return this.http.get<MediaFileListResponse>(this.baseUrl, { params });
   }

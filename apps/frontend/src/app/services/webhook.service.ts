@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Webhook, WebhookDelivery, WebhookStats, CreateWebhookRequest, UpdateWebhookRequest } from '../models/webhook.model';
 
 @Injectable({ providedIn: 'root' })
 export class WebhookService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api/webhooks';
+  private readonly baseUrl = `${environment.apiUrl}/webhooks`;
 
   getAll(): Observable<Webhook[]> {
     return this.http.get<Webhook[]>(this.baseUrl);

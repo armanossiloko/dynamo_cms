@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { Locale, CreateLocale, UpdateLocale, Translation, CreateTranslation, UpdateTranslation, TranslationStatus } from '../models/locale.model';
 
 @Injectable({ providedIn: 'root' })
 export class LocalizationService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7001/api';
+  private readonly baseUrl = environment.apiUrl;
 
   // Locales
   getAllLocales(): Observable<Locale[]> {

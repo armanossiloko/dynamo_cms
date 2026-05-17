@@ -276,19 +276,25 @@ public DbSet<FieldOption> FieldOptions { get; set; }
         // Seed default locales
         var locales = new List<Locale>
         {
-            new() { Code = "en", Name = "English", NativeName = "English", IsDefault = true, FlagEmoji = "🇺🇸", IsRtl = false },
+            new() { Code = "en", Name = "English", NativeName = "English", IsDefault = true, FlagEmoji = "🇬🇧", IsRtl = false },
             new() { Code = "es", Name = "Spanish", NativeName = "Español", IsDefault = false, FlagEmoji = "🇪🇸", IsRtl = false },
             new() { Code = "fr", Name = "French", NativeName = "Français", IsDefault = false, FlagEmoji = "🇫🇷", IsRtl = false },
             new() { Code = "de", Name = "German", NativeName = "Deutsch", IsDefault = false, FlagEmoji = "🇩🇪", IsRtl = false },
             new() { Code = "ja", Name = "Japanese", NativeName = "日本語", IsDefault = false, FlagEmoji = "🇯🇵", IsRtl = false },
         };
 
-        var existingLocales = Locales.AsNoTracking().ToList();
+        var existingLocales = Locales.ToList();
         foreach (var locale in locales)
         {
-            if (existingLocales.Any(l => l.Code == locale.Code))
+            var existing = existingLocales.FirstOrDefault(l => l.Code == locale.Code);
+            if (existing is not null)
             {
-                Locales.Update(locale);
+                existing.Name = locale.Name;
+                existing.NativeName = locale.NativeName;
+                existing.IsDefault = locale.IsDefault;
+                existing.IsRtl = locale.IsRtl;
+                existing.FlagEmoji = locale.FlagEmoji;
+                existing.UpdatedAt = DateTime.UtcNow;
             }
             else
             {
